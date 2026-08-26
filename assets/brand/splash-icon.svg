@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="f" cx="38%" cy="30%" r="78%">
+      <stop offset="0%" stop-color="#7a2430"/>
+      <stop offset="100%" stop-color="#16070a"/>
+    </radialGradient>
+    <linearGradient id="g" x1="200" y1="120" x2="820" y2="900" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f7ebb8"/>
+      <stop offset="42%" stop-color="#e0c36a"/>
+      <stop offset="100%" stop-color="#9a7b28"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="#2a0c12"/>
+  <g transform="translate(140 140) scale(0.726)">
+    <rect width="1024" height="1024" rx="160" fill="url(#f)"/>
+    <path fill="url(#g)" fill-rule="evenodd" d="M512 512 m-430 0 a430 430 0 1 0 860 0 a430 430 0 1 0 -860 0 M512 512 m-360 0 a360 360 0 1 1 720 0 a360 360 0 1 1 -720 0"/>
+    <circle cx="512" cy="512" r="438" fill="none" stroke="url(#g)" stroke-width="10"/>
+    <circle cx="512" cy="512" r="350" fill="none" stroke="url(#g)" stroke-width="8"/>
+    <path fill="url(#g)" transform="translate(18 2) scale(16)" d="M27.15 16.6h7.1c.42 0 .7.28.7.68v1.72c0 .4-.28.66-.7.66h-2.55V41.15h10.35v-1.55c0-.4.28-.68.7-.68h1.85c.42 0 .7.28.7.68V45.7c0 .42-.28.7-.7.7H25.55c-.42 0-.7-.28-.7-.7V17.28c0-.4.28-.68.7-.68h1.6z"/>
+  </g>
+</svg>

@@ -1,0 +1,222 @@
+html.android-app, html.android-app body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html.android-app {
+  --ad-banner-h: 0px;
+  --nav-gap: max(var(--inset-bottom), var(--android-inset-bottom), 3.6rem);
+  --coach-dock: 10.6rem;
+}
+html.android-app body {
+  padding-bottom: 0;
+}
+html.android-app .move-dock {
+  padding-bottom: 0.55rem;
+}
+html.android-app .nav-btn {
+  min-height: 44px;
+}
+html.android-app .match-btns {
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.2rem;
+}
+html.android-app .help-fab {
+  margin-bottom: 0;
+}
+html.android-app .layout {
+  padding-left: 0.28rem;
+  padding-right: 0.28rem;
+  padding-bottom: calc(0.45rem + var(--nav-gap) + var(--ad-banner-h));
+}
+html.android-app #board {
+  width: min(100%, calc(100dvh - var(--inset-top) - 8.6rem - var(--nav-gap))) !important;
+  max-width: 100% !important;
+}
+html.android-app .status-pill {
+  font-size: 0.68rem;
+  padding: 0.1rem 0.28rem;
+}
+html.android-app #panel-match {
+  margin: 0 0.12rem;
+  width: calc(100% - 0.24rem);
+  padding: 0.28rem 0.4rem 0.4rem;
+}
+html.android-app #fold-log .log,
+html.android-app .log {
+  height: 4.2rem !important;
+  max-height: 4.2rem;
+  font-size: 0.92rem;
+}
+html.android-app .boot-frame {
+  overflow: visible;
+}
+html.android-app .boot-tile {
+  width: min(38vw, 148px);
+  height: min(38vw, 148px);
+}
+html.android-app footer.colophon {
+  padding-bottom: calc(1.2rem + var(--nav-gap) + var(--ad-banner-h));
+}
+html.android-app body.is-tutorial {
+  overflow: hidden;
+  height: 100dvh;
+  max-height: 100dvh;
+}
+html.android-app body.is-tutorial header.hero,
+html.android-app body.is-tutorial .layout {
+  padding-left: 0.95rem;
+  padding-right: 0.95rem;
+}
+html.android-app body.is-tutorial .layout {
+  padding-bottom: 0;
+}
+html.android-app body.is-tutorial #guide-coach,
+html.android-app body.is-tutorial #panel-rules {
+  width: 100%;
+  max-width: none;
+}
+html.android-app body.is-tutorial #guide-coach {
+  bottom: auto;
+  padding-bottom: max(0.42rem, var(--nav-gap), var(--ad-banner-h));
+}
+html.android-app body.is-tutorial .controls.coach-btns {
+  padding-bottom: 0;
+}
+html.android-app .overlay {
+  padding-bottom: max(0.7rem, var(--inset-bottom));
+}
+html.android-app #overlay-start #start-actions,
+html.android-app .controls.help-btns {
+  padding-bottom: 0.2rem;
+}
+html.android-app .boot-intro {
+  padding-bottom: calc(var(--nav-gap) + var(--ad-banner-h) + 2.4rem);
+}
+html.android-app .boot-colophon {
+  bottom: calc(0.32rem + var(--nav-gap) + var(--ad-banner-h));
+}
+html.android-app .boot-langs {
+  top: max(1.2rem, calc(var(--inset-top) + 0.78rem));
+  left: max(1.2rem, calc(var(--inset-left) + 0.78rem));
+}
+html.android-app .boot-sounds {
+  top: max(1.2rem, calc(var(--inset-top) + 0.78rem));
+  right: max(1.2rem, calc(var(--inset-right) + 0.78rem));
+}
+html.android-app .boot-actions .btn {
+  min-height: 46px;
+}
+html.android-app button,
+html.android-app .btn {
+  touch-action: manipulation;
+}
+html.android-app header.hero {
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  column-gap: 0.4rem;
+  padding-top: max(0.62rem, calc(var(--inset-top) + 0.42rem));
+  padding-left: max(0.7rem, calc(var(--inset-left) + 0.35rem));
+  padding-right: max(0.7rem, calc(var(--inset-right) + 0.35rem));
+  overflow: hidden;
+}
+html.android-app .hero-tools,
+html.android-app .hero-end {
+  z-index: 3;
+}
+html.android-app .hero-title,
+html.android-app header.hero h1 {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  container-type: inline-size;
+}
+html.android-app header.hero h1 button {
+  font-size: clamp(1.02rem, 4.6vw, 1.52rem);
+  font-size: clamp(1.02rem, 9.2cqi, 1.52rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 0.08em 0.06em 0.06em 0.1em;
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+html.android-app body.is-tutorial header.hero {
+  grid-template-columns: max-content minmax(0, 1fr);
+}
+html.android-app body.is-tutorial header.hero h1 button {
+  font-size: clamp(1.18rem, 5.8vw, 1.78rem);
+  font-size: clamp(1.18rem, 10.4cqi, 1.78rem);
+  font-weight: 600;
+  letter-spacing: 0.09em;
+}
+html.android-app .boot-title {
+  font-size: clamp(0.88rem, 4.2vw, 1.28rem);
+  letter-spacing: 0.05em;
+  padding-left: 0.12em;
+  padding-right: 0.2em;
+  overflow: hidden;
+}
+html.android-app .boot-frame {
+  overflow: hidden;
+  margin-left: max(0.55rem, var(--inset-left));
+  margin-right: max(0.55rem, var(--inset-right));
+  padding-left: max(1.35rem, calc(var(--inset-left) + 1.2rem));
+  padding-right: max(1.35rem, calc(var(--inset-right) + 1.2rem));
+  max-height: calc(100dvh - var(--inset-top) - var(--nav-gap) - var(--ad-banner-h) - 3.6rem);
+  margin-bottom: 0.2rem;
+}
+html.android-app #overlay-start {
+  padding:
+    max(1.2rem, calc(var(--inset-top) + 0.9rem))
+    max(1rem, calc(var(--inset-right) + 0.6rem))
+    max(1.2rem, calc(var(--inset-bottom) + 0.9rem))
+    max(1rem, calc(var(--inset-left) + 0.6rem));
+  align-items: center;
+  justify-items: center;
+  align-content: center;
+  background: rgba(8, 4, 6, 0.78);
+}
+html.android-app #overlay-start .modal {
+  width: min(22.8rem, 88vw);
+  max-width: 88vw;
+  min-height: 0;
+  height: fit-content;
+  max-height: calc(100dvh - var(--inset-top) - var(--inset-bottom) - 2.8rem);
+  padding: 0.95rem 0.95rem 1.05rem;
+  color-scheme: light;
+  align-self: center;
+  justify-self: center;
+  flex: 0 0 auto;
+}
+html.android-app #overlay-start #tab-ai,
+html.android-app #overlay-start #tab-online {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+html.android-app #overlay-start #start-actions {
+  padding-bottom: 0.05rem;
+}
+html.android-app #overlay-start button.btn {
+  min-height: 48px;
+  font-size: 1.08rem;
+}
+html.android-app #overlay-start #btn-host,
+html.android-app #overlay-start #nick-confirm {
+  min-height: 50px;
+  font-size: 1.12rem;
+}
+html.android-app #overlay-start .nick-step input,
+html.android-app #overlay-start .join-row input {
+  min-height: 48px;
+  font-size: 1.18rem;
+  background: #f4ead0;
+  color: var(--imperial-deep);
+  color-scheme: light;
+  -webkit-appearance: none;
+  appearance: none;
+  box-shadow: none;
+}

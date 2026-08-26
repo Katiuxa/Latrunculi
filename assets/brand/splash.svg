@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2732 2732">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="70%">
+      <stop offset="0%" stop-color="#3a141c"/>
+      <stop offset="55%" stop-color="#2a0c12"/>
+      <stop offset="100%" stop-color="#0e0c09"/>
+    </radialGradient>
+    <radialGradient id="field" cx="34%" cy="26%" r="78%">
+      <stop offset="0%" stop-color="#6b1c28"/>
+      <stop offset="100%" stop-color="#16070a"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="256" y1="128" x2="800" y2="896" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f7ebb8"/>
+      <stop offset="45%" stop-color="#e0c36a"/>
+      <stop offset="100%" stop-color="#8f6c1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="2732" height="2732" fill="url(#bg)"/>
+  <g transform="translate(854 700)">
+    <circle cx="512" cy="512" r="500" fill="url(#field)"/>
+    <circle cx="512" cy="512" r="390" fill="none" stroke="url(#gold)" stroke-width="33"/>
+    <circle cx="512" cy="512" r="336" fill="none" stroke="#e8cc6a" stroke-width="10" opacity="0.5"/>
+    <circle cx="512" cy="173" r="14" fill="#e8cc6a"/>
+    <circle cx="512" cy="851" r="14" fill="#e8cc6a"/>
+    <circle cx="173" cy="512" r="14" fill="#e8cc6a"/>
+    <circle cx="851" cy="512" r="14" fill="#e8cc6a"/>
+    <path fill="url(#gold)" transform="translate(18 2) scale(16)" d="
+      M27.15 16.6
+      h7.1
+      c.42 0 .7.28.7.68
+      v1.72
+      c0 .4-.28.66-.7.66
+      h-2.55
+      V41.15
+      h10.35
+      v-1.55
+      c0-.4.28-.68.7-.68
+      h1.85
+      c.42 0 .7.28.7.68
+      V45.7
+      c0 .42-.28.7-.7.7
+      H25.55
+      c-.42 0-.7-.28-.7-.7
+      V17.28
+      c0-.4.28-.68.7-.68
+      h1.6
+      z"/>
+  </g>
+</svg>

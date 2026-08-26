@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500">
+  <defs>
+    <radialGradient id="bg" cx="38%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#3a141c"/>
+      <stop offset="55%" stop-color="#2a0c12"/>
+      <stop offset="100%" stop-color="#0e0c09"/>
+    </radialGradient>
+    <radialGradient id="field" cx="34%" cy="26%" r="78%">
+      <stop offset="0%" stop-color="#6b1c28"/>
+      <stop offset="100%" stop-color="#16070a"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="80" y1="40" x2="250" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f7ebb8"/>
+      <stop offset="45%" stop-color="#e0c36a"/>
+      <stop offset="100%" stop-color="#8f6c1c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="500" fill="url(#bg)"/>
+  <g opacity="0.07" fill="none" stroke="#e0c36a" stroke-width="1.4">
+    <path d="M40 40 L80 80 L40 120 L0 80 Z"/>
+    <path d="M984 40 L1024 80 L984 120 L944 80 Z"/>
+    <path d="M40 380 L80 420 L40 460 L0 420 Z"/>
+    <path d="M984 380 L1024 420 L984 460 L944 420 Z"/>
+  </g>
+  <g transform="translate(70 78) scale(0.67)">
+    <circle cx="256" cy="256" r="248" fill="url(#field)"/>
+    <circle cx="256" cy="256" r="195" fill="none" stroke="url(#gold)" stroke-width="16"/>
+    <circle cx="256" cy="256" r="168" fill="none" stroke="#e8cc6a" stroke-width="5" opacity="0.5"/>
+    <circle cx="256" cy="86" r="7" fill="#e8cc6a"/>
+    <circle cx="256" cy="426" r="7" fill="#e8cc6a"/>
+    <circle cx="86" cy="256" r="7" fill="#e8cc6a"/>
+    <circle cx="426" cy="256" r="7" fill="#e8cc6a"/>
+    <path fill="url(#gold)" transform="translate(9 1) scale(8)" d="
+      M27.15 16.6
+      h7.1
+      c.42 0 .7.28.7.68
+      v1.72
+      c0 .4-.28.66-.7.66
+      h-2.55
+      V41.15
+      h10.35
+      v-1.55
+      c0-.4.28-.68.7-.68
+      h1.85
+      c.42 0 .7.28.7.68
+      V45.7
+      c0 .42-.28.7-.7.7
+      H25.55
+      c-.42 0-.7-.28-.7-.7
+      V17.28
+      c0-.4.28-.68.7-.68
+      h1.6
+      z"/>
+  </g>
+  <g fill="#edd089">
+    <text x="470" y="228" font-family="Times New Roman, serif" font-size="64" letter-spacing="14" font-weight="500">LATRVNCVLI</text>
+    <text x="470" y="286" font-family="Times New Roman, serif" font-size="22" letter-spacing="6" fill="#e8cc6a" opacity="0.92">LVDVS LATRVNCULORVM</text>
+    <text x="470" y="338" font-family="Times New Roman, serif" font-size="20" letter-spacing="3" fill="#f3ead6" opacity="0.78">El juego de los latrones</text>
+  </g>
+  <rect x="0" y="0" width="1024" height="8" fill="#4a1420"/>
+  <rect x="0" y="492" width="1024" height="8" fill="#4a1420"/>
+  <rect x="0" y="8" width="1024" height="3" fill="#c9a227"/>
+  <rect x="0" y="489" width="1024" height="3" fill="#c9a227"/>
+</svg>

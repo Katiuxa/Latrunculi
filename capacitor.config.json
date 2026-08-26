@@ -1,0 +1,35 @@
+{
+  "appId": "com.luduslatrunculorum.app",
+  "appName": "LATRVNCVLI",
+  "webDir": "www",
+  "backgroundColor": "#2a0c12",
+  "android": {
+    "backgroundColor": "#2a0c12",
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false,
+    "useLegacyBridge": false,
+    "adjustMarginsForEdgeToEdge": "disable"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 380,
+      "launchAutoHide": true,
+      "backgroundColor": "#2a0c12",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER",
+      "showSpinner": false,
+      "splashFullScreen": true,
+      "splashImmersive": true
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#2a0c12",
+      "overlaysWebView": true
+    },
+    "Keyboard": {
+      "resize": "native",
+      "resizeOnFullScreen": false
+    }
+  }
+}
