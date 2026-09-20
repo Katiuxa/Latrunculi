@@ -1,17 +1,26 @@
 # Latrunculi
 
-Ludus Latrunculorum. Web + app Android (Capacitor).
+Ludus Latrunculorum. Web y Android en el mismo repo, en carpetas distintas.
 
-**Jugar:** https://katiuxa.github.io/Latrunculi/
+## Web
 
-La barra de navegación de Android tapaba botones. Se resolvió con `WindowInsets` en `MainActivity` (padding inferior nativo). CSS `safe-area` solo no bastaba.
+https://katiuxa.github.io/Latrunculi/
+
+Código en `docs/`. Esa carpeta es también el publish de Netlify.
 
 ```bash
-# web
 node server.js
-# android
+```
+
+## Android
+
+Capacitor. Versión **1.0.89**. Código nativo en `android/`. El HTML de la app se genera con `npm run prepare:android` (no uses `docs/` para el APK).
+
+```bash
 npm ci
 npm run apk
 ```
 
 Keystore de Play Store fuera de git.
+
+La barra de navegación de Android se reserva con insets nativos en `MainActivity`.

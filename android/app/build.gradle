@@ -1,17 +1,29 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.luduslatrunculorum.app"
+    namespace = "com.metamovidas.lautrunculi"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.luduslatrunculorum.app"
+        applicationId "com.metamovidas.lautrunculi"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 19
-        versionName "1.0.18"
+        versionCode 89
+        versionName "1.0.89"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    flavorDimensions = ["channel"]
+    productFlavors {
+        store {
+            dimension "channel"
+        }
+        /* Side-by-side install for device testing without replacing Play Store build */
+        sidecar {
+            dimension "channel"
+            applicationIdSuffix ".v2"
+            versionNameSuffix "-v2"
         }
     }
     signingConfigs {
@@ -49,6 +61,8 @@ dependencies {
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation project(':capacitor-android')
+    implementation "com.google.android.gms:play-services-ads:$playServicesAdsVersion"
+    implementation "com.android.billingclient:billing:8.0.0"
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
@@ -65,3 +79,4 @@ try {
 } catch(Exception e) {
     logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
 }
+

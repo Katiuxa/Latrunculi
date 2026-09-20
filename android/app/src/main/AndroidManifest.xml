@@ -3,6 +3,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     <uses-feature android:name="android.hardware.wifi" android:required="false" />
@@ -45,10 +46,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <!-- Publicidad (AdMob): cuando abras la ficha de Play Store, descomenta y pon tu App ID.
+        <!-- AdMob App ID (strings.xml → admob_app_id). Must use "~", not "/". -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-XXXXXXXXXXXXXXXX~NNNNNNNNNN" />
-        -->
+            android:value="@string/admob_app_id" />
     </application>
 </manifest>

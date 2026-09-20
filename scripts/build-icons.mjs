@@ -16,9 +16,18 @@ async function png(fromSvg, dest, size, bg) {
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   let img = sharp(fromSvg, { density: 384 });
   if (size) img = img.resize(size, size, { fit: "cover" });
-  // Always flatten launcher icons onto imperial burgundy — never leave a white ring
   img = img.flatten({ background: bg || { r: 42, g: 12, b: 18 } });
-  await img.png().toFile(dest);
+  const tmp = dest + ".tmp.png";
+  try {
+    if (fs.existsSync(dest)) fs.unlinkSync(dest);
+  } catch (e) {}
+  await img.png().toFile(tmp);
+  try {
+    fs.renameSync(tmp, dest);
+  } catch (e) {
+    fs.copyFileSync(tmp, dest);
+    try { fs.unlinkSync(tmp); } catch (e2) {}
+  }
 }
 
 async function pngSize(fromSvg, dest, w, h) {
@@ -59,21 +68,24 @@ async function writeMipmap(androidRes) {
 
 async function writeSplash(androidRes) {
   const splash = svg("splash.svg");
+  const icon = svg("splash-icon.svg");
   const dens = [
-    ["mdpi", 320],
-    ["hdpi", 480],
-    ["xhdpi", 720],
-    ["xxhdpi", 960],
-    ["xxxhdpi", 1280]
+    ["mdpi", 320, 240],
+    ["hdpi", 480, 360],
+    ["xhdpi", 720, 480],
+    ["xxhdpi", 960, 720],
+    ["xxxhdpi", 1280, 960]
   ];
-  for (const [d, size] of dens) {
+  for (const [d, size, iconSize] of dens) {
     const dir = path.join(androidRes, "drawable-" + d);
     fs.mkdirSync(dir, { recursive: true });
     await png(splash, path.join(dir, "splash.png"), size);
+    await png(icon, path.join(dir, "splash_icon.png"), iconSize, { r: 42, g: 12, b: 18 });
   }
   const port = path.join(androidRes, "drawable");
   fs.mkdirSync(port, { recursive: true });
   await png(splash, path.join(port, "splash.png"), 960);
+  await png(icon, path.join(port, "splash_icon.png"), 480, { r: 42, g: 12, b: 18 });
 }
 
 async function main() {

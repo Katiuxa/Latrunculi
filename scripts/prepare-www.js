@@ -1,14 +1,14 @@
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const https = require("https");
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
 
-const ROOT = path.join(__dirname, "..");
-const WWW = path.join(ROOT, "www");
-const FONT_DIR = path.join(WWW, "fonts");
+const ROOT = path.join(__dirname, '..');
+const WWW = path.join(ROOT, 'www');
+const FONT_DIR = path.join(WWW, 'fonts');
 const CSS_URL =
-  "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cinzel+Decorative:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap";
+  'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cinzel+Decorative:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap';
 
 function fetchBuffer(url, headers) {
   return new Promise((resolve, reject) => {
@@ -18,14 +18,14 @@ function fetchBuffer(url, headers) {
         return;
       }
       if (res.statusCode !== 200) {
-        reject(new Error("HTTP " + res.statusCode + " " + url));
+        reject(new Error('HTTP ' + res.statusCode + ' ' + url));
         return;
       }
       const chunks = [];
-      res.on("data", (c) => chunks.push(c));
-      res.on("end", () => resolve(Buffer.concat(chunks)));
+      res.on('data', (c) => chunks.push(c));
+      res.on('end', () => resolve(Buffer.concat(chunks)));
     });
-    req.on("error", reject);
+    req.on('error', reject);
   });
 }
 
@@ -35,42 +35,77 @@ function ensureDir(dir) {
 
 async function prepareFonts() {
   ensureDir(FONT_DIR);
-  const cssPath = path.join(WWW, "fonts.css");
+  const cssPath = path.join(WWW, 'fonts.css');
   if (fs.existsSync(cssPath) && fs.readdirSync(FONT_DIR).length >= 3) return;
   const css = (await fetchBuffer(CSS_URL, {
-    "User-Agent":
-      "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"
-  })).toString("utf8");
+    'User-Agent':
+      'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36'
+  })).toString('utf8');
   const urls = [...new Set([...css.matchAll(/url\((https:\/\/[^)]+)\)/g)].map((m) => m[1]))];
   let localCss = css;
   for (let i = 0; i < urls.length; i++) {
     const url = urls[i];
-    const ext = (url.split(".").pop() || "woff2").split("?")[0];
-    const name = "f" + i + "." + ext;
+    const ext = (url.split('.').pop() || 'woff2').split('?')[0];
+    const name = 'f' + i + '.' + ext;
     const dest = path.join(FONT_DIR, name);
     if (!fs.existsSync(dest)) {
       const buf = await fetchBuffer(url, {
-        "User-Agent":
-          "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"
+        'User-Agent':
+          'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36'
       });
       fs.writeFileSync(dest, buf);
     }
-    localCss = localCss.split(url).join("fonts/" + name);
+    localCss = localCss.split(url).join('fonts/' + name);
   }
   fs.writeFileSync(cssPath, localCss);
 }
 
 function patchHtml(html) {
   html = html.replace('<html lang="es">', '<html lang="es" class="android-app is-native">');
+  /* Strip any leftover CrazyGames SDK if present in source HTML */
+  html = html.replace(/\s*<script[^>]*crazygames[^>]*><\/script>/gi, "");
   html = html.replace(
     /<link rel="preconnect" href="https:\/\/fonts\.googleapis\.com" \/>\s*<link rel="preconnect" href="https:\/\/fonts\.gstatic\.com" crossorigin \/>\s*<link href="https:\/\/fonts\.googleapis\.com\/css2\?[^"]+" rel="stylesheet" \/>/,
-    '<link rel="stylesheet" href="fonts.css" />\n  <link rel="stylesheet" href="android.css" />'
+    '<link rel="stylesheet" href="fonts.css" />\n  <link rel="stylesheet" href="android.css" />\n  <link rel="stylesheet" href="ads.css" />'
   );
   if (!html.includes("android.css")) {
-    html = html.replace("</title>", '</title>\n  <link rel="stylesheet" href="fonts.css" />\n  <link rel="stylesheet" href="android.css" />');
+    html = html.replace(
+      "</title>",
+      '</title>\n  <link rel="stylesheet" href="fonts.css" />\n  <link rel="stylesheet" href="android.css" />\n  <link rel="stylesheet" href="ads.css" />'
+    );
   }
-  if (!html.includes("src=\"bridge.js\"")) {
-    html = html.replace("</body>", '  <script src="bridge.js"></script>\n</body>');
+  if (!html.includes("ads.css")) {
+    html = html.replace(
+      'android.css" />',
+      'android.css" />\n  <link rel="stylesheet" href="ads.css" />'
+    );
+  }
+  html = html.replace(
+    /<script\s+src="native\/game-state-validator\.js"><\/script>/,
+    '<script src="game-state-validator.js"></script>'
+  );
+  if (!html.includes('src="game-state-validator.js"') && !html.includes('src="native/game-state-validator.js"')) {
+    html = html.replace(
+      "</body>",
+      '  <script src="game-state-validator.js"></script>\n</body>'
+    );
+  }
+  if (!html.includes('src="bridge.js"')) {
+    html = html.replace(
+      "</body>",
+      '  <script src="bridge.js"></script>\n  <script src="ads-config.js"></script>\n  <script src="ads-manager.js"></script>\n</body>'
+    );
+  } else if (!html.includes('src="ads-manager.js"')) {
+    html = html.replace(
+      '<script src="bridge.js"></script>',
+      '<script src="bridge.js"></script>\n  <script src="ads-config.js"></script>\n  <script src="ads-manager.js"></script>'
+    );
+  }
+  if (!html.includes('src="ads-config.js"')) {
+    html = html.replace(
+      '<script src="ads-manager.js"></script>',
+      '<script src="ads-config.js"></script>\n  <script src="ads-manager.js"></script>'
+    );
   }
   html = html.replace(
     '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />',
@@ -81,16 +116,30 @@ function patchHtml(html) {
 
 async function main() {
   ensureDir(WWW);
-  const src = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
-  fs.writeFileSync(path.join(WWW, "index.html"), patchHtml(src));
-  for (const f of ["favicon.svg", "manifest.webmanifest"]) {
+  const src = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  fs.writeFileSync(path.join(WWW, 'index.html'), patchHtml(src));
+  for (const f of ['favicon.svg', 'manifest.webmanifest']) {
     const p = path.join(ROOT, f);
     if (fs.existsSync(p)) fs.copyFileSync(p, path.join(WWW, f));
   }
-  fs.copyFileSync(path.join(ROOT, "native", "bridge.js"), path.join(WWW, "bridge.js"));
-  fs.copyFileSync(path.join(ROOT, "native", "android.css"), path.join(WWW, "android.css"));
+  const brandSrc = path.join(ROOT, 'assets', 'brand');
+  const brandDest = path.join(WWW, 'brand');
+  ensureDir(brandDest);
+  for (const name of ['boot-tile.png', 'icon-full.png']) {
+    const p = path.join(brandSrc, name);
+    if (fs.existsSync(p)) fs.copyFileSync(p, path.join(brandDest, name));
+  }
+  fs.copyFileSync(path.join(ROOT, 'native', 'bridge.js'), path.join(WWW, 'bridge.js'));
+  fs.copyFileSync(path.join(ROOT, 'native', 'android.css'), path.join(WWW, 'android.css'));
+  fs.copyFileSync(path.join(ROOT, 'native', 'ads-config.js'), path.join(WWW, 'ads-config.js'));
+  fs.copyFileSync(path.join(ROOT, 'native', 'ads-manager.js'), path.join(WWW, 'ads-manager.js'));
+  fs.copyFileSync(path.join(ROOT, 'native', 'ads.css'), path.join(WWW, 'ads.css'));
+  fs.copyFileSync(
+    path.join(ROOT, 'native', 'game-state-validator.js'),
+    path.join(WWW, 'game-state-validator.js')
+  );
   await prepareFonts();
-  console.log("www listo");
+  console.log('www listo');
 }
 
 main().catch((err) => {

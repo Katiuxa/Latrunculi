@@ -1,76 +1,356 @@
-html.android-app, html.android-app body {
+/* Android / Capacitor shell — keeps game chrome clear of system nav + ads stack. */
+
+html.android-app,
+html.android-app body {
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
 }
+
 html.android-app {
+  --metamo-h: 0px;
   --ad-banner-h: 0px;
-  --nav-gap: max(var(--inset-bottom), var(--android-inset-bottom), 3.6rem);
-  --coach-dock: 10.6rem;
+  /* Native AdView sits below the WebView; reserve a hairline so counts never kiss the slot edge */
+  --native-ad-slot-h: 0px;
+  --ad-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --nav-gap: env(safe-area-inset-bottom, 0px);
+  --ads-stack: calc(var(--metamo-h) + var(--ad-banner-h) + var(--native-ad-slot-h));
+  --bottom-chrome: calc(var(--ad-safe-bottom) + var(--ads-stack));
+  --hero-h: clamp(2.6rem, 8dvh, 3.2rem);
+  --coach-dock: clamp(13.2rem, 34dvh, 15.6rem);
+  /* status + move-dock + Nueva partida + marcador (log hidden with banner) */
+  --match-chrome-h: clamp(11.5rem, 34dvh, 15.5rem);
+  --new-game-h: 3rem;
 }
+html.android-app.has-ad-banner {
+  --ad-banner-h: 0px;
+  /* Native AdView row lives under the WebView (~50dp). Floor matches MainActivity. */
+  --native-ad-slot-h: 50px;
+}
+html.android-app.has-metamo {
+  --metamo-h: 0px;
+}
+
 html.android-app body {
   padding-bottom: 0;
 }
-html.android-app .move-dock {
-  padding-bottom: 0.55rem;
+
+/* Game screen: header fixed, main column scrolls (ScrollView + fillViewport) */
+html.android-app body:not(.is-tutorial) {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
 }
-html.android-app .nav-btn {
-  min-height: 44px;
+
+html.android-app body:not(.is-tutorial) header.hero {
+  flex: 0 0 auto;
 }
+
 html.android-app .match-btns {
-  margin-bottom: 0.35rem;
-  padding-bottom: 0.2rem;
+  margin-bottom: 0.2rem;
+  padding-bottom: 0.12rem;
+  flex: 0 0 auto;
+  flex-shrink: 0;
+}
+html.android-app .match-btns .btn {
+  flex: 1 1 auto;
+  flex-shrink: 0;
+  min-height: var(--new-game-h);
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+  font-size: clamp(0.95rem, 3.4vw, 1.12rem);
+  line-height: 1.2;
+  box-sizing: border-box;
 }
 html.android-app .help-fab {
   margin-bottom: 0;
 }
+
+/* Game content: pack board + New game + marcador tight; leave bottom free for ads/nav */
 html.android-app .layout {
-  padding-left: 0.28rem;
-  padding-right: 0.28rem;
-  padding-bottom: calc(0.45rem + var(--nav-gap) + var(--ad-banner-h));
+  padding-left: 0.28rem !important;
+  padding-right: 0.28rem !important;
+  padding-bottom: calc(0.55rem + var(--bottom-chrome)) !important;
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: none;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-content: flex-start !important;
+  gap: 0.12rem !important;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
 }
-html.android-app #board {
-  width: min(100%, calc(100dvh - var(--inset-top) - 8.6rem - var(--nav-gap))) !important;
+
+html.android-app body:not(.is-tutorial) .board-column {
+  flex: 0 0 auto !important;
+  min-height: 0;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  order: 1 !important;
+}
+
+html.android-app body:not(.is-tutorial) .board-orla {
+  flex: 0 0 auto !important;
+  min-height: 0;
+  max-width: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+html.android-app body:not(.is-tutorial) .move-dock {
+  flex: 0 0 auto;
+  padding-top: 0.1rem;
+  padding-bottom: 0.08rem;
+  margin: 0;
+}
+
+html.android-app .nav-btn {
+  min-height: 40px;
+}
+
+html.android-app body:not(.is-tutorial) #board {
+  width: min(
+    100%,
+    calc(100dvh - var(--inset-top) - var(--hero-h) - var(--match-chrome-h) - var(--bottom-chrome) - 0.6rem)
+  ) !important;
   max-width: 100% !important;
+  max-height: min(
+    calc(100dvh - var(--inset-top) - var(--hero-h) - var(--match-chrome-h) - var(--bottom-chrome) - 0.6rem),
+    100vw
+  ) !important;
+  height: auto !important;
+  flex: 0 0 auto;
+  min-height: 0;
+  aspect-ratio: var(--board-ar, 1);
+  object-fit: contain;
+}
+
+html.android-app body:not(.is-tutorial) .board-wrap {
+  width: 100%;
+  max-width: 100%;
+}
+
+html.android-app .side-stack {
+  flex: 0 0 auto !important;
+  width: 100%;
+  min-height: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html.android-app #panel-match {
+  margin: 0.08rem 0.12rem 0.15rem !important;
+  width: calc(100% - 0.24rem);
+  padding: 0.28rem 0.4rem 0.45rem;
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto !important;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  overflow: visible;
+  /* Always below board + move-dock (never above) */
+  order: 2 !important;
+}
+html.android-app #panel-match .room-share {
+  flex: 0 0 auto;
+}
+html.android-app body.is-waiting #panel-match .match-btns,
+html.android-app body.is-online #panel-match .match-btns {
+  flex-shrink: 0 !important;
+}
+/* Empty register steals height while Nueva partida looks clipped — hide with banner / short screens */
+html.android-app.has-ad-banner #fold-log,
+html.android-app #fold-log:has(.log:empty),
+html.android-app #fold-log:has(.log .empty) {
+  display: none !important;
 }
 html.android-app .status-pill {
-  font-size: 0.68rem;
-  padding: 0.1rem 0.28rem;
+  font-size: clamp(0.68rem, 2.6vw, 0.82rem);
+  font-weight: 600;
+  padding: 0.22rem 0.45rem;
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  width: 100%;
+  max-width: 100%;
+  align-self: center;
+  text-align: center;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+  flex: 0 0 auto;
 }
-html.android-app #panel-match {
-  margin: 0 0.12rem;
-  width: calc(100% - 0.24rem);
-  padding: 0.28rem 0.4rem 0.4rem;
+html.android-app .board-column {
+  align-items: center;
+}
+html.android-app .board-orla {
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+html.android-app #panel-match .counts {
+  margin-bottom: 0.1rem;
+  flex: 0 0 auto;
 }
 html.android-app #fold-log .log,
 html.android-app .log {
-  height: 4.2rem !important;
-  max-height: 4.2rem;
+  height: clamp(2.2rem, 9dvh, 3.4rem) !important;
+  max-height: clamp(2.2rem, 9dvh, 3.4rem);
   font-size: 0.92rem;
 }
-html.android-app .boot-frame {
-  overflow: visible;
+
+/* Short phones: compress chrome so marcador + banner stay visible */
+@media (max-height: 720px) {
+  html.android-app {
+    --match-chrome-h: clamp(10.5rem, 36dvh, 14rem);
+    --new-game-h: 2.85rem;
+  }
+  html.android-app #panel-match .counts .num {
+    font-size: 0.95rem;
+  }
+  html.android-app #fold-log {
+    display: none !important;
+  }
+  html.android-app .match-btns .btn {
+    min-height: var(--new-game-h);
+    padding-top: 0.48rem;
+    padding-bottom: 0.48rem;
+  }
 }
+
+@media (max-height: 600px) {
+  html.android-app {
+    --match-chrome-h: clamp(9.5rem, 38dvh, 12.5rem);
+    --new-game-h: 2.7rem;
+  }
+  html.android-app #fold-log {
+    display: none !important;
+  }
+  html.android-app #panel-match {
+    padding-bottom: 0.55rem;
+  }
+}
+
 html.android-app .boot-tile {
   width: min(38vw, 148px);
   height: min(38vw, 148px);
 }
+
 html.android-app footer.colophon {
-  padding-bottom: calc(1.2rem + var(--nav-gap) + var(--ad-banner-h));
+  display: none !important;
 }
+
+html.android-app .boot-colophon {
+  display: block;
+}
+
+/* ——— Tutorial: official in-board labels; coach docks flush to AdMob ——— */
 html.android-app body.is-tutorial {
   overflow: hidden;
   height: 100dvh;
   max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  /* Native AdView sits below the WebView — no fake bottom chrome gap */
+  padding-bottom: 0 !important;
+  box-sizing: border-box;
+  --hero-h: 2.85rem;
+  --bottom-chrome: 0px;
+  --native-ad-slot-h: 0px;
+  --ad-banner-h: 0px;
+  --ads-stack: 0px;
+  /* Taller dock: reclaim label gutter + former ad-slot padding */
+  --coach-dock: clamp(13.2rem, 34dvh, 15.6rem);
+  --tutorial-gutter: 0.28rem;
+  --tutorial-frame-pad: 1.5rem;
+  --tutorial-avail-h: calc(
+    100dvh
+    - var(--inset-top, 0px)
+    - var(--hero-h)
+    - var(--coach-dock)
+    - var(--tutorial-gutter)
+  );
+  --tutorial-board: min(
+    calc(100vw - 0.56rem),
+    calc(var(--tutorial-avail-h) - var(--tutorial-frame-pad))
+  );
 }
-html.android-app body.is-tutorial header.hero,
-html.android-app body.is-tutorial .layout {
-  padding-left: 0.95rem;
-  padding-right: 0.95rem;
+html.android-app body.is-tutorial header.hero {
+  flex: 0 0 auto;
+  grid-template-columns: minmax(3.4rem, 1fr) minmax(0, auto) minmax(3.4rem, 1fr);
+  padding-top: max(0.32rem, calc(var(--inset-top) + 0.14rem));
+  padding-bottom: 0.06rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  --hero-title-bias: 0px;
+}
+html.android-app body.is-tutorial header.hero h1 button {
+  font-size: clamp(1.24rem, 6.4vw, 1.78rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  min-height: 42px;
+  padding: 0.08em 0.06em;
 }
 html.android-app body.is-tutorial .layout {
-  padding-bottom: 0;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  padding: 0.04rem 0.22rem 0 !important;
+  margin: 0 !important;
+  gap: 0.12rem !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+html.android-app body.is-tutorial .board-column {
+  order: 1;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  width: 100%;
+  max-width: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  padding: 0;
+  overflow: hidden !important;
+}
+html.android-app body.is-tutorial .side-stack,
+html.android-app body.is-tutorial #panel-rules,
+html.android-app body.is-tutorial #panel-rules.panel-greca {
+  order: 2;
+  flex: 0 0 var(--coach-dock) !important;
+  width: 100%;
+  max-width: none;
+  min-height: var(--coach-dock) !important;
+  height: var(--coach-dock) !important;
+  max-height: var(--coach-dock) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0;
+  background: none;
+  box-shadow: none;
 }
 html.android-app body.is-tutorial #guide-coach,
 html.android-app body.is-tutorial #panel-rules {
@@ -78,12 +358,203 @@ html.android-app body.is-tutorial #panel-rules {
   max-width: none;
 }
 html.android-app body.is-tutorial #guide-coach {
-  bottom: auto;
-  padding-bottom: max(0.42rem, var(--nav-gap), var(--ad-banner-h));
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 40;
+  flex: 0 0 var(--coach-dock) !important;
+  width: 100%;
+  min-height: var(--coach-dock) !important;
+  height: var(--coach-dock) !important;
+  max-height: var(--coach-dock) !important;
+  margin: 0 !important;
+  padding: 0.34rem 0.7rem 0.22rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: linear-gradient(180deg, #f7f0de 0%, #eadcb8 100%);
+  border-top: 1px solid rgba(201, 162, 39, 0.55);
+  border-bottom: 0 !important;
+  border-radius: 0.55rem 0.55rem 0 0;
+  box-shadow: 0 -8px 22px rgba(8, 6, 4, 0.28);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+html.android-app body.is-tutorial .coach-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  padding: 0.04rem 0.28rem 0.14rem 0.08rem;
+  box-sizing: border-box;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(107, 28, 40, 0.48) rgba(107, 28, 40, 0.1);
+}
+html.android-app body.is-tutorial .coach-scroll::-webkit-scrollbar {
+  width: 6px;
+  background: transparent;
+}
+html.android-app body.is-tutorial .coach-scroll::-webkit-scrollbar-track {
+  background: rgba(107, 28, 40, 0.1);
+  border-radius: 999px;
+  margin: 0.1rem 0;
+}
+html.android-app body.is-tutorial .coach-scroll::-webkit-scrollbar-thumb {
+  background: rgba(107, 28, 40, 0.48);
+  border-radius: 999px;
+  min-height: 1.5rem;
+}
+html.android-app body.is-tutorial #guide-coach.has-scroll-more::after {
+  content: "";
+  position: absolute;
+  left: 0.55rem;
+  right: 0.9rem;
+  bottom: 3.15rem;
+  height: 1.1rem;
+  pointer-events: none;
+  z-index: 6;
+  background: linear-gradient(180deg, rgba(234, 220, 184, 0), rgba(234, 220, 184, 0.94));
+}
+html.android-app body.is-tutorial .coach-more {
+  display: none !important;
 }
 html.android-app body.is-tutorial .controls.coach-btns {
-  padding-bottom: 0;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
+  position: relative;
+  z-index: 8;
+  margin: 0 !important;
+  padding: 0.22rem 0 0 !important;
+  gap: 0.3rem;
+  border-top: 1px solid rgba(201, 162, 39, 0.28);
+  background: linear-gradient(180deg, rgba(247, 240, 222, 0.92), #eadcb8);
 }
+html.android-app body.is-tutorial .controls.coach-btns .btn {
+  min-height: 46px;
+  font-size: clamp(1.02rem, 3.8vw, 1.18rem);
+  padding: 0.3rem 0.22rem;
+}
+html.android-app body.is-tutorial .coach-title {
+  font-size: clamp(1.32rem, 5.6vw, 1.72rem) !important;
+  line-height: 1.22 !important;
+  margin-bottom: 0.2rem !important;
+  padding-bottom: 0.12rem !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+html.android-app body.is-tutorial .coach-kicker {
+  display: block !important;
+  font-size: clamp(0.88rem, 3.4vw, 1.05rem) !important;
+  line-height: 1.28 !important;
+  margin-bottom: 0.12rem !important;
+  height: auto !important;
+  letter-spacing: 0.1em;
+}
+html.android-app body.is-tutorial .coach-body,
+html.android-app body.is-tutorial .coach-task {
+  font-size: clamp(1.16rem, 4.8vw, 1.42rem) !important;
+  line-height: 1.42 !important;
+  margin-bottom: 0.24rem !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  white-space: normal;
+}
+html.android-app body.is-tutorial .coach-task {
+  padding: 0.46rem 0.58rem !important;
+  box-sizing: border-box;
+}
+html.android-app body.is-tutorial .coach-body,
+html.android-app body.is-tutorial .coach-task,
+html.android-app body.is-tutorial .coach-title,
+html.android-app body.is-tutorial .coach-kicker {
+  width: 100%;
+  display: block;
+  flex: 0 0 auto;
+}
+html.android-app body.is-tutorial .coach-dots {
+  display: none !important;
+}
+
+/* Same board chrome as main play: labels inside cells, no external A–H / I–VIII rails */
+html.android-app body.is-tutorial .board-orla {
+  width: min(100%, calc(var(--tutorial-board) + 1.5rem)) !important;
+  max-width: 100% !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  flex: 0 0 auto !important;
+  background: linear-gradient(180deg, #1a140e 0%, #120e0a 100%) !important;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(232, 204, 106, 0.16) !important;
+}
+html.android-app body.is-tutorial .board-frame {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 12px !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  grid-template-columns: none !important;
+  grid-template-rows: none !important;
+}
+html.android-app body.is-tutorial .board-wrap {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  grid-column: auto !important;
+  grid-row: auto !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+html.android-app body.is-tutorial #board,
+html.android-app.has-ad-banner body.is-tutorial #board {
+  width: var(--tutorial-board) !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  aspect-ratio: 1 / 1 !important;
+  margin: 0 auto !important;
+  flex: 0 0 auto !important;
+  min-width: 0;
+  min-height: 0;
+}
+html.android-app body.is-tutorial .cols,
+html.android-app body.is-tutorial .rows {
+  display: none !important;
+}
+html.android-app body.is-tutorial .sq-coord {
+  display: block !important;
+  font-size: clamp(0.48rem, 2vw, 0.58rem) !important;
+  line-height: 1 !important;
+  opacity: 0.72 !important;
+}
+html.android-app body.is-tutorial .greca-t,
+html.android-app body.is-tutorial .greca-b {
+  height: 12px !important;
+  background-size: 22px 12px !important;
+}
+html.android-app body.is-tutorial .greca-l,
+html.android-app body.is-tutorial .greca-r {
+  width: 12px !important;
+  top: 12px !important;
+  bottom: 12px !important;
+}
+
 html.android-app .overlay {
   padding-bottom: max(0.7rem, var(--inset-bottom));
 }
@@ -91,19 +562,86 @@ html.android-app #overlay-start #start-actions,
 html.android-app .controls.help-btns {
   padding-bottom: 0.2rem;
 }
-html.android-app .boot-intro {
-  padding-bottom: calc(var(--nav-gap) + var(--ad-banner-h) + 2.4rem);
+
+html.android-app .boot-intro,
+html.android-app .boot-tile,
+html.android-app .boot-title,
+html.android-app .boot-sub,
+html.android-app .boot-line {
+  animation: none !important;
 }
-html.android-app .boot-colophon {
-  bottom: calc(0.32rem + var(--nav-gap) + var(--ad-banner-h));
+html.android-app .boot-intro .boot-actions {
+  opacity: 1 !important;
+  transform: none !important;
+  pointer-events: auto !important;
+  transition: none !important;
+}
+html.android-app .boot-intro {
+  padding-bottom: calc(var(--bottom-chrome) + 2.2rem);
+  overflow: visible;
+}
+html.android-app .boot-intro.out {
+  display: none !important;
+  animation: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 html.android-app .boot-langs {
-  top: max(1.2rem, calc(var(--inset-top) + 0.78rem));
-  left: max(1.2rem, calc(var(--inset-left) + 0.78rem));
+  position: absolute;
+  top: max(0.85rem, calc(var(--inset-top) + 0.55rem));
+  left: max(0.85rem, calc(var(--inset-left) + 0.45rem));
+  z-index: 50;
 }
 html.android-app .boot-sounds {
-  top: max(1.2rem, calc(var(--inset-top) + 0.78rem));
-  right: max(1.2rem, calc(var(--inset-right) + 0.78rem));
+  position: absolute;
+  top: max(0.85rem, calc(var(--inset-top) + 0.55rem));
+  right: max(0.85rem, calc(var(--inset-right) + 0.45rem));
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+  pointer-events: auto;
+}
+html.android-app .boot-sounds .mute-fab {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(232, 204, 106, 0.55);
+  background: rgba(20, 8, 10, 0.72);
+  color: #e8cc6a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+html.android-app .boot-sounds .lat-ad-noads-fab {
+  width: 42px;
+  height: 42px;
+  font-size: 0.5rem !important;
+}
+html.android-app .hero-end .mute-fab,
+html.android-app .hero-tools .mute-fab,
+html.android-app .hero-end .lat-ad-noads-fab {
+  width: 36px;
+  height: 36px;
+  display: inline-grid;
+  place-items: center;
+  visibility: visible;
+}
+html.android-app .hero-end .lat-ad-noads-fab {
+  font-size: 0.46rem !important;
+}
+html.android-app .hero-end .lat-ad-noads-fab:not([hidden]) {
+  display: inline-grid !important;
+}
+html.android-app .boot-langs .lang-fab {
+  border: 1px solid rgba(232, 204, 106, 0.55);
+  background: rgba(20, 8, 10, 0.72);
+  color: #e8cc6a;
+}
+html.android-app .hero-end {
+  z-index: 90;
+  position: relative;
+}
+html.android-app .hero-end .mute-fab {
+  border: 1px solid rgba(232, 204, 106, 0.45);
+  background: rgba(20, 8, 10, 0.55);
 }
 html.android-app .boot-actions .btn {
   min-height: 46px;
@@ -112,46 +650,110 @@ html.android-app button,
 html.android-app .btn {
   touch-action: manipulation;
 }
+/* 3-rail header: side fabs never pull the title off true screen center */
 html.android-app header.hero {
-  grid-template-columns: max-content minmax(0, 1fr) max-content;
-  column-gap: 0.4rem;
-  padding-top: max(0.62rem, calc(var(--inset-top) + 0.42rem));
-  padding-left: max(0.7rem, calc(var(--inset-left) + 0.35rem));
-  padding-right: max(0.7rem, calc(var(--inset-right) + 0.35rem));
-  overflow: hidden;
+  display: grid !important;
+  grid-template-columns: minmax(3.4rem, 1fr) minmax(0, auto) minmax(3.4rem, 1fr) !important;
+  align-items: center;
+  column-gap: 0.28rem;
+  padding-top: max(0.72rem, calc(var(--inset-top) + 0.5rem));
+  padding-left: max(0.95rem, calc(var(--inset-left) + 0.55rem));
+  padding-right: max(0.95rem, calc(var(--inset-right) + 0.55rem));
+  overflow: visible;
+  z-index: 80;
+  position: relative;
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  --hero-title-bias: 0px;
+}
+html.android-app header.hero:has(.hero-end .lat-ad-noads-fab:not([hidden])) {
+  --hero-title-bias: 0px;
 }
 html.android-app .hero-tools,
 html.android-app .hero-end {
-  z-index: 3;
+  z-index: 90;
+  position: relative;
+}
+html.android-app .hero-tools {
+  grid-column: 1 !important;
+  grid-row: 1;
+  justify-self: start;
+  align-self: center;
+  padding-left: 0;
+  margin: 0;
+}
+html.android-app .hero-end {
+  grid-column: 3 !important;
+  grid-row: 1;
+  justify-self: end;
+  align-self: center;
+  padding-right: 0;
+  margin: 0;
+  gap: 0.28rem;
+  display: flex;
+  align-items: center;
+}
+/* Title locked to the middle rail — geometric center of the header */
+html.android-app .hero-title {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  grid-column: 2 !important;
+  grid-row: 1;
+  justify-self: center !important;
+  align-self: center !important;
+  transform: translateX(-0.28rem) !important;
+  width: max-content !important;
+  max-width: min(70vw, 16rem) !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  text-align: center !important;
+  z-index: 85 !important;
+  pointer-events: none;
+  container-type: normal !important;
+}
+html.android-app header.hero:not(:has(.hero-end .lat-ad-noads-fab:not([hidden]))) .hero-title {
+  max-width: min(78vw, 17rem) !important;
 }
 html.android-app .hero-title,
 html.android-app header.hero h1 {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  overflow: hidden;
-  container-type: inline-size;
+  max-width: none;
+  overflow: visible;
+}
+html.android-app header.hero h1 {
+  margin: 0;
+  width: auto;
 }
 html.android-app header.hero h1 button {
-  font-size: clamp(1.02rem, 4.6vw, 1.52rem);
-  font-size: clamp(1.02rem, 9.2cqi, 1.52rem);
+  pointer-events: auto;
+  font-size: clamp(1.14rem, 5.4vw, 1.72rem) !important;
   font-weight: 600;
   letter-spacing: 0.06em;
-  padding: 0.08em 0.06em 0.06em 0.1em;
+  padding: 0.08em 0.1em 0.06em 0.04em;
   max-width: 100%;
+  width: auto;
   box-sizing: border-box;
   white-space: nowrap;
-  overflow: hidden;
+  overflow: visible;
   text-overflow: clip;
+  color: #edd089;
 }
-html.android-app body.is-tutorial header.hero {
-  grid-template-columns: max-content minmax(0, 1fr);
+html.android-app body.is-tutorial .hero-end {
+  display: flex !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  z-index: 95;
 }
-html.android-app body.is-tutorial header.hero h1 button {
-  font-size: clamp(1.18rem, 5.8vw, 1.78rem);
-  font-size: clamp(1.18rem, 10.4cqi, 1.78rem);
-  font-weight: 600;
-  letter-spacing: 0.09em;
+html.android-app body.is-tutorial .hero-end .mute-fab,
+html.android-app body.is-tutorial .hero-end .lat-ad-noads-fab:not([hidden]) {
+  display: inline-grid !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 html.android-app .boot-title {
   font-size: clamp(0.88rem, 4.2vw, 1.28rem);
@@ -161,12 +763,14 @@ html.android-app .boot-title {
   overflow: hidden;
 }
 html.android-app .boot-frame {
-  overflow: hidden;
-  margin-left: max(0.55rem, var(--inset-left));
-  margin-right: max(0.55rem, var(--inset-right));
-  padding-left: max(1.35rem, calc(var(--inset-left) + 1.2rem));
-  padding-right: max(1.35rem, calc(var(--inset-right) + 1.2rem));
-  max-height: calc(100dvh - var(--inset-top) - var(--nav-gap) - var(--ad-banner-h) - 3.6rem);
+  position: relative;
+  z-index: 1;
+  overflow: auto;
+  width: min(34rem, calc(100% - 1.1rem)) !important;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1.7rem 1.55rem 1.15rem;
+  max-height: calc(100dvh - var(--inset-top) - var(--bottom-chrome) - 4.6rem);
   margin-bottom: 0.2rem;
 }
 html.android-app #overlay-start {
@@ -219,4 +823,76 @@ html.android-app #overlay-start .join-row input {
   -webkit-appearance: none;
   appearance: none;
   box-shadow: none;
+}
+
+/* Start overlay: flexible chips that shrink text instead of overflowing */
+html.android-app #overlay-start .play-tab,
+html.android-app #overlay-start .color-opt,
+html.android-app #overlay-start .variant-opt,
+html.android-app #overlay-start .diff-card {
+  min-height: 2.75rem;
+  height: auto;
+  line-height: 1.22;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  box-sizing: border-box;
+}
+html.android-app #overlay-start .diff-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 0.32rem;
+}
+html.android-app #overlay-start .diff-card[data-diff="caesar"] {
+  grid-column: 1 / -1;
+}
+html.android-app #overlay-start .diff-card {
+  background: rgba(243, 234, 214, 0.96);
+  border-color: rgba(107, 28, 40, 0.48);
+  padding: 0.5rem 0.32rem;
+}
+html.android-app #overlay-start .diff-card.on {
+  background: rgba(201, 162, 39, 0.32);
+}
+html.android-app #overlay-start .diff-card .diff-level {
+  display: block;
+  margin-bottom: 0.14rem;
+  color: var(--gold-dim);
+  font-size: clamp(0.58rem, 2.2vw, 0.72rem);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 1.15;
+  text-shadow: none;
+}
+html.android-app #overlay-start .diff-card h3 {
+  color: var(--imperial);
+  font-size: clamp(0.72rem, 2.8vw, 0.98rem);
+  font-weight: 500;
+  text-shadow: none;
+}
+html.android-app .piece-key-card {
+  background: rgba(74, 20, 32, 0.06);
+  border-color: rgba(201, 162, 39, 0.32);
+}
+html.android-app .piece-key-name {
+  color: var(--imperial);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-shadow: none;
+}
+html.android-app body.is-tutorial .piece-key-name {
+  font-size: 0.52rem;
+  letter-spacing: 0.06em;
+  text-shadow: none;
+}
+html.android-app .piece-key-note {
+  color: inherit;
+  font-size: 0.92rem;
+  font-weight: 400;
+}
+
+/* Britania boards also clear bottom chrome */
+html.android-app body.is-britania #board {
+  max-height: calc(
+    100dvh - var(--inset-top) - var(--hero-h) - var(--match-chrome-h) - var(--bottom-chrome)
+  ) !important;
 }

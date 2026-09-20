@@ -1,6 +1,9 @@
 "use strict";
 
 window.latrunculiConsumeBack = function () {
+  if (window.LatrunculiAds && typeof window.LatrunculiAds.consumeBack === "function") {
+    if (window.LatrunculiAds.consumeBack()) return true;
+  }
   const openMenu = document.querySelector(".lang-menu:not([hidden])");
   if (openMenu) {
     document.querySelectorAll(".lang-menu").forEach((menu) => { menu.hidden = true; });
@@ -33,31 +36,18 @@ window.latrunculiConsumeBack = function () {
   return false;
 };
 
-window.LatrunculiAds = {
-  enabled: false,
-  bannerReady: false,
-  async init() {
-    return false;
-  },
-  async showBanner() {
-    return false;
-  },
-  async hideBanner() {
-    return false;
-  },
-  async showInterstitial() {
-    return false;
-  }
-};
-
 (function applyAndroidInsets() {
   document.documentElement.classList.add("android-app");
   const root = document.documentElement.style;
-  if (!root.getPropertyValue("--android-inset-bottom") || root.getPropertyValue("--android-inset-bottom") === "0px") {
-    root.setProperty("--android-inset-bottom", "80px");
+  const realNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+  /* Nav bar is padded natively (0 in CSS). Desktop preview only needs a hairline. */
+  const bottomDefault = realNative ? "0px" : "0px";
+  const topDefault = realNative ? "36px" : "12px";
+  if (!root.getPropertyValue("--android-inset-bottom")) {
+    root.setProperty("--android-inset-bottom", bottomDefault);
   }
   if (!root.getPropertyValue("--android-inset-top") || root.getPropertyValue("--android-inset-top") === "0px") {
-    root.setProperty("--android-inset-top", "36px");
+    root.setProperty("--android-inset-top", topDefault);
   }
 })();
 
@@ -67,10 +57,33 @@ window.addEventListener("pageshow", () => {
 window.addEventListener("focus", () => {
   try { if (window.latrunculiPrimeAudio) window.latrunculiPrimeAudio(); } catch (e) {}
 });
+function isScrollableTouch(el) {
+  let n = el;
+  while (n && n !== document.body && n !== document.documentElement) {
+    if (n.classList && (
+      n.classList.contains("coach-scroll") ||
+      n.classList.contains("coach-body") ||
+      n.id === "guide-coach" ||
+      n.id === "panel-rules" ||
+      n.classList.contains("log") ||
+      n.classList.contains("lang-menu") ||
+      n.classList.contains("modal") ||
+      n.classList.contains("help-body") ||
+      n.classList.contains("boot-frame") ||
+      n.classList.contains("lat-ad-interstitial__panel")
+    )) return true;
+    n = n.parentElement;
+  }
+  return false;
+}
 document.addEventListener(
   "touchmove",
   (e) => {
-    if (e.touches && e.touches.length > 1) e.preventDefault();
+    if (e.touches && e.touches.length > 1) {
+      e.preventDefault();
+      return;
+    }
+    if (!isScrollableTouch(e.target)) e.preventDefault();
   },
   { passive: false }
 );

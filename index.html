@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
   <meta name="theme-color" content="#2a0c12" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -29,7 +29,7 @@
       --inset-bottom: max(env(safe-area-inset-bottom, 0px), var(--android-inset-bottom));
       --inset-left: max(env(safe-area-inset-left, 0px), var(--android-inset-left));
       --nav-gap: var(--inset-bottom);
-      --coach-dock: 10.4rem;
+      --coach-dock: clamp(10.8rem, 29dvh, 12.4rem);
       --board-files: 8;
       --board-ranks: 8;
       --board-ar: 1;
@@ -77,7 +77,7 @@
     }
     header.hero {
       position: relative;
-      z-index: 40;
+      z-index: 80;
       display: grid;
       grid-template-columns: minmax(5.6rem, 1fr) minmax(0, auto) minmax(5.6rem, 1fr);
       align-items: center;
@@ -95,6 +95,18 @@
       justify-self: center;
       min-width: 0;
       z-index: 1;
+    }
+    .hero-logo {
+      display: none;
+      pointer-events: none;
+      user-select: none;
+      width: min(4.2rem, 18vw);
+      height: auto;
+      margin: 0 auto -0.1rem;
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .35));
+    }
+    html:not(.android-app):not(.is-native) body.is-idle .hero-logo {
+      display: block;
     }
     .hero-title button { pointer-events: auto; }
     header.hero h1 { margin: 0; }
@@ -130,6 +142,7 @@
       padding: 0.15rem 0.85rem 0.45rem;
     }
     .board-column { grid-column: 1; display: flex; flex-direction: column; align-items: center; width: max-content; max-width: 100%; }
+    .board-orla { align-self: center; }
     .side-stack { grid-column: 2; display: flex; flex-direction: column; gap: 3px; width: 100%; }
     .side-panel {
       background: linear-gradient(180deg, #f7f0de 0%, var(--papyrus) 40%, #eadcb8 100%);
@@ -295,8 +308,16 @@
     .status-pill {
       font-family: Cinzel, serif; font-weight: 600; text-align: center;
       background: #4a1420; color: var(--gold-soft);
-      padding: 0.32rem 0.55rem; letter-spacing: 0.08em; font-size: 0.78rem;
-      border: 1px solid rgba(201,162,39,.35); align-self: stretch; margin-bottom: 0;
+      padding: 0.32rem 0.55rem; letter-spacing: 0.06em;
+      font-size: clamp(0.72rem, 2.8vw, 0.88rem);
+      line-height: 1.25;
+      border: 1px solid rgba(201,162,39,.35);
+      align-self: center;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-wrap: anywhere;
+      margin-bottom: 0;
     }
     .status-pill.think { animation: pulseGold 1.4s ease-in-out infinite; }
     @keyframes pulseGold {
@@ -379,6 +400,7 @@
     }
     body.is-britania .cols { font-size: 0.78rem; letter-spacing: 0; }
     footer.colophon {
+      display: none !important;
       position: relative;
       z-index: 2;
       text-align: center;
@@ -517,8 +539,8 @@
       align-items: center;
       gap: 0.28rem;
       padding: 0.55rem 0.4rem 0.5rem;
-      background: rgba(74, 20, 32, 0.06);
-      border: 1px solid rgba(201, 162, 39, 0.32);
+      background: rgba(42, 12, 18, 0.1);
+      border: 1px solid rgba(201, 162, 39, 0.42);
       min-width: 0;
     }
     .piece-key-card.is-dux { border-color: var(--gold); box-shadow: inset 0 0 0 1px rgba(201,162,39,.25); }
@@ -535,6 +557,7 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--imperial);
+      line-height: 1.2;
     }
     .piece-key-note {
       font-size: 0.92rem;
@@ -581,8 +604,14 @@
     .piece.held {
       position: fixed; z-index: 240; pointer-events: none; margin: 0; cursor: grabbing;
       transform: scale(1.28); box-shadow: 0 16px 28px rgba(0,0,0,.55), 0 0 0 3px #f0d078;
+      transition: transform 0.1s ease-out;
+      will-change: left, top, transform;
     }
-    .piece.origin-faded { opacity: 0.3; }
+    .piece.origin-faded {
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
     .cell.drop-ok { box-shadow: inset 0 0 0 3px var(--gold), inset 0 0 18px rgba(212,175,55,.4); }
     .custodia-tip {
       position: absolute; z-index: 40; max-width: 230px;
@@ -614,7 +643,7 @@
       padding-right: 0;
       z-index: 2;
     }
-    body.is-tutorial .hero-end { display: none !important; }
+    body.is-tutorial .hero-end { display: flex !important; }
     .mute-fab.is-off { opacity: 0.42; }
     .mute-fab.is-off::after {
       content: "";
@@ -627,7 +656,7 @@
       transform: rotate(-38deg);
       pointer-events: none;
     }
-    .lang-wrap { position: relative; z-index: 50; }
+    .lang-wrap { position: relative; z-index: 90; }
     .lang-fab, .icon-fab {
       display: grid; place-items: center;
       padding: 0; font-size: 0;
@@ -638,7 +667,7 @@
       stroke-linecap: round; stroke-linejoin: round;
     }
     .lang-menu {
-      position: absolute; top: calc(100% + 7px); left: 0; z-index: 95;
+      position: absolute; top: calc(100% + 7px); left: 0; z-index: 200;
       min-width: 8.6rem;
       background: linear-gradient(180deg, #f7f0de, #eadcb8);
       border: 1px solid var(--gold);
@@ -709,16 +738,51 @@
     .modal .sub { text-align: center; font-family: Cinzel, serif; color: var(--rust); margin-bottom: 1rem; letter-spacing: 0.08em; font-size: 1.02rem; }
     .modal p { margin: 0.55rem 0; font-size: 1.12rem; line-height: 1.48; }
     .modal p strong { font-family: Cinzel, serif; font-size: 0.9rem; color: var(--imperial); }
-    .modal-help { width: min(680px, 94vw); display: flex; flex-direction: column; overflow: hidden; }
-    .modal-help .help-body { overflow: auto; flex: 1; min-height: 0; }
+    .modal-help {
+      position: relative;
+      width: min(680px, 94vw);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-help .help-body {
+      overflow: auto;
+      flex: 1;
+      min-height: 0;
+      padding-right: 0.45rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #c9a227 rgba(42, 12, 18, 0.4);
+    }
+    .modal-help .help-body::-webkit-scrollbar {
+      width: 9px;
+    }
+    .modal-help .help-body::-webkit-scrollbar-track {
+      margin: 0.2rem 0;
+      background: linear-gradient(180deg, rgba(42, 12, 18, 0.18), rgba(42, 12, 18, 0.38));
+      border-radius: 999px;
+      border: 1px solid rgba(232, 204, 106, 0.22);
+    }
+    .modal-help .help-body::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #e8cc6a, #a67c1a 55%, #7a5a12);
+      border-radius: 999px;
+      border: 1px solid rgba(255, 236, 170, 0.35);
+      box-shadow: inset 0 0 0 1px rgba(42, 12, 18, 0.35);
+    }
+    .modal-help .help-body::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #f0d878, #c9a227 55%, #8a6818);
+    }
     .controls.help-btns { flex-shrink: 0; padding-bottom: 0.15rem; }
     .help-sec { font-family: Cinzel, serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rust); margin: 1.05rem 0 0.25rem; }
     .help-sec:first-of-type { margin-top: 0.15rem; }
     .play-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-bottom: 1rem; }
     .play-tab {
-      font-family: Cinzel, serif; letter-spacing: 0.06em; cursor: pointer;
+      font-family: Cinzel, serif; letter-spacing: 0.04em; cursor: pointer;
       border: 1px solid var(--gold-dim); background: rgba(255,255,255,.3);
-      padding: 0.5rem 0.4rem; color: var(--imperial);
+      padding: 0.55rem 0.45rem; color: var(--imperial);
+      min-height: 2.75rem; height: auto; line-height: 1.25;
+      font-size: clamp(0.72rem, 2.8vw, 0.92rem);
+      overflow-wrap: anywhere; hyphens: auto; box-sizing: border-box;
     }
     .play-tab.on { border-color: var(--gold); background: rgba(201,162,39,.22); }
     [hidden] { display: none !important; }
@@ -821,34 +885,59 @@
       cursor: pointer;
     }
     body.is-online .online-dot { display: none; }
-    body.is-online #btn-resign { display: block; }
-    body.is-waiting #btn-resign { display: none; }
-    #btn-resign { display: none; }
-    .color-pick-label { font-family: Cinzel, serif; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--imperial); margin: 0.35rem 0 0.35rem; }
+    .color-pick-label { font-family: Cinzel, serif; font-size: clamp(0.62rem, 2.4vw, 0.76rem); letter-spacing: 0.1em; text-transform: uppercase; color: var(--imperial); margin: 0.35rem 0 0.35rem; line-height: 1.2; }
     .color-pick-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.4rem; margin-bottom: 0.7rem; }
     .color-opt {
       cursor: pointer; border: 1px solid var(--gold-dim); background: rgba(255,255,255,.35);
-      padding: 0.45rem 0.3rem; text-align: center; font-family: Cinzel, serif; font-size: 0.82rem; color: var(--imperial);
+      padding: 0.5rem 0.35rem; text-align: center; font-family: Cinzel, serif;
+      font-size: clamp(0.68rem, 2.6vw, 0.86rem); color: var(--imperial);
+      min-height: 2.75rem; height: auto; line-height: 1.2;
+      overflow-wrap: anywhere; hyphens: auto; box-sizing: border-box;
     }
     .color-opt.on { border-color: var(--gold); background: rgba(201,162,39,.22); }
     .variant-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-bottom: 0.7rem; }
     .variant-opt {
       cursor: pointer; border: 1px solid var(--gold-dim); background: rgba(255,255,255,.35);
-      padding: 0.5rem 0.35rem; text-align: center; font-family: Cinzel, serif; color: var(--imperial);
+      padding: 0.55rem 0.4rem; text-align: center; font-family: Cinzel, serif; color: var(--imperial);
+      min-height: 2.85rem; height: auto; line-height: 1.2; box-sizing: border-box;
     }
     .variant-opt.on { border-color: var(--gold); background: rgba(201,162,39,.22); }
-    .variant-opt h3 { font-size: 0.95rem; margin: 0; }
-    .variant-opt .variant-size { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-dim); margin-top: 0.15rem; }
-    .swatch { display: block; width: 22px; height: 22px; border-radius: 50%; margin: 0 auto 0.25rem; }
+    .variant-opt h3 { font-size: clamp(0.72rem, 2.8vw, 0.98rem); margin: 0; line-height: 1.2; overflow-wrap: anywhere; hyphens: auto; }
+    .variant-opt .variant-size { font-size: clamp(0.58rem, 2.2vw, 0.72rem); letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-dim); margin-top: 0.2rem; line-height: 1.15; }
+    .swatch { display: block; width: 22px; height: 22px; border-radius: 50%; margin: 0 auto 0.25rem; flex-shrink: 0; }
     .swatch.marble { background: radial-gradient(circle at 32% 28%, #f3e6d0, #8c6d45); border: 1px solid #6e5228; }
     .swatch.obsidian { background: radial-gradient(circle at 35% 30%, #3a3a40, #000); border: 1px solid #6b4e32; }
     .swatch.mix { background: linear-gradient(90deg, #f3e6d0 50%, #111 50%); border: 1px solid #6e5228; }
     .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.45rem 0 0.8rem; }
-    .diff-card { cursor: pointer; border: 1px solid var(--gold-dim); background: rgba(255,255,255,.35); padding: 0.55rem 0.35rem; text-align: center; }
+    .diff-card {
+      cursor: pointer; border: 1px solid rgba(107, 28, 40, 0.45); background: rgba(243, 234, 214, 0.92);
+      padding: 0.6rem 0.45rem; text-align: center;
+      min-height: 3rem; height: auto; line-height: 1.2; box-sizing: border-box;
+    }
     .diff-card[data-diff="caesar"] { grid-column: 1 / -1; }
-    .diff-card.on { border-color: var(--gold); background: rgba(201,162,39,.2); box-shadow: inset 0 0 0 1px var(--gold); }
-    .diff-card h3 { font-family: Cinzel, serif; color: var(--imperial); font-size: 0.95rem; margin: 0; }
-    .diff-card .diff-level { font-family: Cinzel, serif; color: var(--gold-dim); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.2rem; }
+    .diff-card.on { border-color: var(--gold); background: rgba(201,162,39,.28); box-shadow: inset 0 0 0 1px var(--gold); }
+    .diff-card h3 {
+      font-family: Cinzel, serif;
+      color: var(--imperial);
+      font-size: clamp(0.72rem, 2.8vw, 0.98rem);
+      font-weight: 500;
+      margin: 0;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+      hyphens: auto;
+    }
+    .diff-card .diff-level {
+      font-family: Cinzel, serif;
+      color: var(--gold-dim);
+      font-size: clamp(0.58rem, 2.2vw, 0.72rem);
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+      hyphens: auto;
+    }
     @media (min-width: 981px) and (hover: hover) and (pointer: fine) {
       :root {
         --pc-side: 21rem;
@@ -1078,9 +1167,11 @@
       }
       html.android-app body.is-tutorial .side-stack,
       html.is-native body.is-tutorial .side-stack {
-        max-height: none;
-        overflow: visible;
+        max-height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        overflow: hidden;
         display: flex;
+        flex: 0 0 var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
       }
       html.android-app #panel-match,
       html.is-native #panel-match {
@@ -1140,10 +1231,24 @@
     @media (max-width: 980px), (hover: none) and (pointer: coarse) {
       :root {
         --nav-gap: max(var(--inset-bottom), 5.25rem);
+        --hero-h: clamp(2.5rem, 8dvh, 3.1rem);
+        /* status + tablero dock + panel marcador debajo del board */
+        --match-chrome-h: clamp(13rem, 38dvh, 18rem);
       }
       html, body {
         -webkit-tap-highlight-color: transparent;
         overscroll-behavior: none;
+        height: 100dvh;
+        max-height: 100dvh;
+        overflow: hidden;
+      }
+      body:not(.is-tutorial) {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      body:not(.is-tutorial) header.hero {
+        flex: 0 0 auto;
       }
       button, .btn, .play-tab, .color-opt, .variant-opt, .diff-card {
         touch-action: manipulation;
@@ -1155,26 +1260,72 @@
       }
       header.hero {
         display: grid;
-        grid-template-columns: max-content minmax(0, 1fr) max-content;
-        column-gap: 0.28rem;
+        grid-template-columns: minmax(3.2rem, 1fr) minmax(0, auto) minmax(3.2rem, 1fr);
+        column-gap: 0.2rem;
+        align-items: center;
         padding: 0.12rem 0.55rem 0.42rem;
         padding-top: max(0.22rem, var(--inset-top));
+        padding-left: max(0.55rem, var(--inset-left));
+        padding-right: max(0.55rem, var(--inset-right));
         max-width: none;
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+        --hero-edge: 0px;
+        --hero-title-bias: 0px;
       }
       .hero-title {
-        width: 100%;
-        container-type: inline-size;
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: center;
+        align-self: center;
+        transform: translateX(-0.28rem);
+        width: max-content;
+        max-width: min(70vw, 16rem);
+        min-width: 0;
+        overflow: visible;
+        text-align: center;
+        z-index: 85;
+        pointer-events: none;
+        container-type: normal;
+      }
+      .hero-title button { pointer-events: auto; }
+      header.hero:has(.hero-end .lat-ad-noads-fab:not([hidden])) {
+        --hero-title-bias: 0px;
+      }
+      header.hero:not(:has(.hero-end .lat-ad-noads-fab:not([hidden]))) .hero-title {
+        max-width: min(78vw, 17rem);
       }
       header.hero h1 button {
-        font-size: clamp(1.18rem, 5.4vw, 1.72rem);
-        font-size: clamp(1.18rem, 10.2cqi, 1.72rem);
-        letter-spacing: 0.1em;
-        padding: 0.04em 0.1em 0 0.1em;
+        font-size: clamp(1.18rem, 5.6vw, 1.78rem);
+        letter-spacing: 0.06em;
+        padding: 0.04em 0.1em 0 0.04em;
         font-weight: 600;
+        overflow: visible;
+        white-space: nowrap;
       }
-      .hero-tools { padding-left: 0.12rem; }
+      .hero-tools {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: start;
+        align-self: center;
+        z-index: 90;
+      }
+      .hero-end {
+        grid-column: 3;
+        grid-row: 1;
+        justify-self: end;
+        align-self: center;
+        z-index: 90;
+        display: flex;
+        align-items: center;
+        gap: 0.28rem;
+      }
       .mute-fab, .help-fab { width: 32px; height: 32px; font-size: 0.88rem; }
-      .hero-end { gap: 0.22rem; }
 
       .layout {
         grid-template-columns: minmax(0, 1fr);
@@ -1185,8 +1336,14 @@
         width: 100%;
         max-width: 100%;
         min-width: 0;
-        padding: 0.42rem 0.95rem calc(0.55rem + var(--nav-gap));
+        flex: 1 1 auto;
+        min-height: 0;
+        padding: 0.42rem 0.95rem calc(0.75rem + var(--nav-gap));
         overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+        touch-action: pan-y;
         box-sizing: border-box;
       }
       body.is-britania .layout {
@@ -1205,14 +1362,47 @@
         width: 100%;
         max-width: 100%;
         gap: 0;
-        align-items: stretch;
+        align-items: center;
         padding: 0 0.12rem;
         box-sizing: border-box;
+        flex: 0 1 auto;
+        min-height: 0;
       }
+      /* Tablero + move-dock primero; debajo Nueva partida / marcador */
       #panel-match { order: 2; grid-column: auto; width: 100%; }
       #panel-rules { order: 3; grid-column: auto; width: 100%; }
       #guide-play { display: none !important; }
       body:not(.is-tutorial) #panel-rules { display: none !important; }
+
+      /* Web mobile: match native rules sheet + keep coach dock visible */
+      html:not(.android-app):not(.is-native) #overlay-help {
+        align-items: stretch;
+        place-items: stretch;
+        padding-top: max(0.2rem, var(--inset-top));
+        padding-bottom: max(0.28rem, var(--nav-gap));
+      }
+      html:not(.android-app):not(.is-native) #overlay-help .modal-help {
+        height: calc(100dvh - var(--inset-top) - var(--nav-gap) - 0.45rem);
+        max-height: calc(100dvh - var(--inset-top) - var(--nav-gap) - 0.45rem);
+        min-height: calc(100dvh - var(--inset-top) - var(--nav-gap) - 0.45rem);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      html:not(.android-app):not(.is-native) #overlay-help .help-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+      }
+      html:not(.android-app):not(.is-native) body.is-tutorial #guide-coach {
+        display: flex !important;
+        visibility: visible;
+        opacity: 1;
+      }
+      html:not(.android-app):not(.is-native) body.is-tutorial #panel-rules {
+        display: flex !important;
+        visibility: visible;
+      }
 
       body.is-tutorial {
         overflow: hidden;
@@ -1220,10 +1410,11 @@
         max-height: 100dvh;
       }
       body.is-tutorial header.hero {
-        grid-template-columns: max-content minmax(0, 1fr);
+        grid-template-columns: minmax(3.2rem, 1fr) minmax(0, auto) minmax(3.2rem, 1fr);
         padding-bottom: 0.04rem;
         padding-left: 0.55rem;
         padding-right: 0.55rem;
+        --hero-title-bias: 0px;
       }
       body.is-tutorial header.hero h1 button {
         font-size: clamp(1.32rem, 6.6vw, 1.95rem);
@@ -1264,11 +1455,12 @@
         grid-column: auto;
         width: 100%;
         max-width: 100%;
-        height: auto;
-        min-height: 0;
+        height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        min-height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        max-height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
         margin: 0;
         padding: 0;
-        flex: 1 1 auto;
+        flex: 0 0 var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
         display: flex;
         flex-direction: column;
         align-self: stretch;
@@ -1292,76 +1484,108 @@
         left: auto;
         right: auto;
         bottom: auto;
-        z-index: 46;
+        z-index: 40;
         width: 100%;
         max-width: 100%;
-        height: auto;
-        flex: 1 1 auto;
-        max-height: none;
-        min-height: 0;
+        height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        flex: 0 0 var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        max-height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        min-height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
         margin: 0;
-        padding: 0.28rem 0.7rem max(0.42rem, var(--nav-gap));
+        padding: 0.28rem 0.7rem 0.36rem;
         display: flex;
         flex-direction: column;
         align-self: stretch;
         box-sizing: border-box;
+        overflow: hidden;
         background: linear-gradient(180deg, #f7f0de 0%, #eadcb8 100%);
         border-top: 1px solid var(--gold);
+        border-radius: 0.55rem 0.55rem 0 0;
         box-shadow: 0 -10px 28px rgba(8, 6, 4, 0.35);
       }
       body.is-tutorial .coach-scroll {
         flex: 1 1 auto;
         min-height: 0;
-        overflow-y: auto;
+        overflow-x: hidden;
+        overflow-y: scroll;
         -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        touch-action: pan-y;
+        padding-right: 0.28rem;
+        scrollbar-gutter: stable;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(107, 28, 40, 0.42) rgba(107, 28, 40, 0.08);
       }
-      .coach-more {
-        display: none;
-        text-align: center;
-        font-family: Cinzel, serif;
-        font-size: 0.68rem;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--imperial);
-        opacity: 0.72;
-        padding: 0.08rem 0 0.04rem;
+      body.is-tutorial .coach-scroll::-webkit-scrollbar {
+        width: 5px;
       }
-      .coach-more.show { display: block; }
-      .coach-more span { animation: coachNudge 1.15s ease-in-out infinite; display: inline-block; }
-      @keyframes coachNudge {
-        0%, 100% { transform: translateY(0); opacity: 0.55; }
-        50% { transform: translateY(4px); opacity: 1; }
+      body.is-tutorial .coach-scroll::-webkit-scrollbar-track {
+        background: rgba(107, 28, 40, 0.08);
+        border-radius: 999px;
       }
-      body.is-tutorial .coach-kicker { display: none; }
+      body.is-tutorial .coach-scroll::-webkit-scrollbar-thumb {
+        background: rgba(107, 28, 40, 0.42);
+        border-radius: 999px;
+      }
+      body.is-tutorial #guide-coach.has-scroll-more::after {
+        content: "";
+        position: absolute;
+        left: 0.55rem;
+        right: 0.85rem;
+        bottom: 3.2rem;
+        height: 1.1rem;
+        pointer-events: none;
+        z-index: 6;
+        background: linear-gradient(180deg, rgba(234, 220, 184, 0), rgba(234, 220, 184, 0.92));
+      }
+      .coach-more,
+      body.is-tutorial .coach-more {
+        display: none !important;
+      }
+      body.is-tutorial .coach-kicker {
+        display: block;
+        font-size: clamp(0.88rem, 3.4vw, 1.05rem);
+        margin-bottom: 0.14rem;
+        letter-spacing: 0.1em;
+      }
       body.is-tutorial .coach-title {
-        font-size: 0.98rem;
-        margin-bottom: 0.12rem;
-        padding-bottom: 0.08rem;
+        font-size: clamp(1.28rem, 5.4vw, 1.68rem);
+        line-height: 1.22;
+        margin-bottom: 0.2rem;
+        padding-bottom: 0.12rem;
+        height: auto;
+        overflow-wrap: anywhere;
       }
       body.is-tutorial .coach-body {
-        font-size: 0.86rem;
-        line-height: 1.28;
-        margin-bottom: 0.18rem;
+        font-size: clamp(1.14rem, 4.7vw, 1.4rem);
+        line-height: 1.42;
+        margin-bottom: 0.24rem;
+        height: auto;
+        overflow-wrap: anywhere;
       }
       body.is-tutorial .coach-task {
-        font-size: 0.86rem;
-        padding: 0.22rem 0.38rem;
-        line-height: 1.25;
+        font-size: clamp(1.14rem, 4.7vw, 1.4rem);
+        padding: 0.46rem 0.58rem;
+        line-height: 1.4;
+        height: auto;
+        overflow-wrap: anywhere;
       }
       body.is-tutorial .coach-dots { display: none; }
       body.is-tutorial .controls.coach-btns {
         position: static;
+        flex: 0 0 auto;
         flex-shrink: 0;
         z-index: 8;
-        margin: 0.18rem 0 0;
-        padding: 0.12rem 0 0;
+        margin: 0;
+        padding: 0.28rem 0 0;
         gap: 0.32rem;
+        border-top: 1px solid rgba(201, 162, 39, 0.28);
         background: none;
       }
       body.is-tutorial .controls.coach-btns .btn {
-        min-height: 44px;
-        font-size: 0.95rem;
-        padding: 0.22rem 0.2rem;
+        min-height: 48px;
+        font-size: clamp(1rem, 3.6vw, 1.15rem);
+        padding: 0.28rem 0.22rem;
       }
       body.is-tutorial .board-orla { margin: 0; background: transparent; box-shadow: none; }
       body.is-tutorial .piece-key {
@@ -1375,7 +1599,13 @@
       body.is-tutorial .piece-key-row { min-height: 0; gap: 0.12rem; }
       body.is-tutorial .piece-key .piece { width: 22px; height: 22px; }
       body.is-tutorial .piece-key .piece.dux { width: 26px; height: 26px; }
-      body.is-tutorial .piece-key-name { font-size: 0.52rem; letter-spacing: 0.06em; }
+      body.is-tutorial .piece-key-name {
+        font-size: 0.52rem;
+        letter-spacing: 0.06em;
+        color: var(--imperial);
+        font-weight: 700;
+        text-shadow: none;
+      }
       body.is-tutorial .piece-key-note { display: none; }
 
       .side-panel,
@@ -1414,6 +1644,12 @@
         max-width: 100%;
         margin: 0;
         box-sizing: border-box;
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
         box-shadow: 0 12px 28px rgba(0,0,0,.42);
       }
       .greca-t, .greca-b { height: 12px; background-size: 22px 12px; }
@@ -1430,10 +1666,14 @@
       }
       .cols, .rows { display: none !important; }
       .board-wrap {
-        display: block;
+        display: flex;
+        flex: 1 1 auto;
+        min-height: 0;
         width: 100%;
         grid-column: auto;
         grid-row: auto;
+        align-items: center;
+        justify-content: center;
       }
       .sq-coord {
         display: block;
@@ -1444,13 +1684,22 @@
       .sq-file { right: 2px; bottom: 1px; top: auto; }
       .sq-rank { left: 2px; top: 1px; }
       #board {
-        width: min(100%, calc(100dvh - var(--inset-top) - 8.8rem - var(--nav-gap)));
+        width: min(
+          100%,
+          calc(100dvh - var(--inset-top) - var(--hero-h) - var(--match-chrome-h) - var(--nav-gap))
+        );
         max-width: 100%;
+        max-height: min(
+          calc(100dvh - var(--inset-top) - var(--hero-h) - var(--match-chrome-h) - var(--nav-gap)),
+          100vw
+        );
         height: auto;
-        aspect-ratio: var(--board-ar, 1);
+        aspect-ratio: 1 / 1;
         overscroll-behavior: none;
         -webkit-touch-callout: none;
         margin: 0 auto;
+        flex: 1 1 auto;
+        min-height: 0;
       }
       body.is-britania .board-wrap {
         width: 100%;
@@ -1473,17 +1722,18 @@
       body.is-britania .sq-coord { font-size: 0.42rem; }
       body.is-tutorial #board {
         width: 100%;
-        max-width: 100%;
-        height: auto;
-        aspect-ratio: 1;
+        max-width: none;
+        height: 100%;
+        aspect-ratio: auto;
         margin: 0;
+        flex: none;
       }
       body.is-tutorial .board-orla,
       body.is-tutorial .board-frame,
       body.is-tutorial .board-wrap {
-        width: 100%;
         max-width: 100%;
-        margin: 0;
+        margin: 0 auto;
+        flex: 0 0 auto;
       }
       .piece { width: 93%; height: 93%; }
       .piece.dux { width: 98%; height: 98%; }
@@ -1503,11 +1753,21 @@
       }
 
       .status-pill {
-        font-size: 0.72rem;
-        font-weight: 500;
-        padding: 0.12rem 0.3rem;
-        letter-spacing: 0.02em;
-        line-height: 1.2;
+        font-size: clamp(0.68rem, 2.6vw, 0.82rem);
+        font-weight: 600;
+        padding: 0.22rem 0.45rem;
+        letter-spacing: 0.04em;
+        line-height: 1.25;
+        width: 100%;
+        max-width: 100%;
+        align-self: center;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      .board-orla {
+        align-self: center;
+        margin-left: auto;
+        margin-right: auto;
       }
       .nav-btn { height: 36px; }
       .move-dock { min-height: 0; }
@@ -1519,26 +1779,55 @@
       .mini-row { min-height: 10px; gap: 2px; margin-top: 1px; }
       .mini-coin { width: 8px; height: 8px; }
       .cap-line { font-size: 0.72rem; margin-top: 0.06rem; }
-      .log { height: 88px; font-size: 1.02rem; }
+      .log { height: clamp(2.4rem, 11dvh, 88px); max-height: clamp(2.4rem, 11dvh, 88px); font-size: 1.02rem; }
+
+      @media (max-height: 720px) {
+        :root { --match-chrome-h: clamp(11.5rem, 40dvh, 15.5rem); }
+        .log { height: clamp(2rem, 9dvh, 72px); max-height: clamp(2rem, 9dvh, 72px); }
+      }
+      @media (max-height: 600px) {
+        :root { --match-chrome-h: clamp(10.5rem, 42dvh, 13.5rem); }
+        #fold-log { display: none; }
+      }
 
       #panel-match {
         margin: 0 0.2rem;
         width: calc(100% - 0.4rem);
-        padding: 0.4rem 0.5rem 0.55rem;
+        padding: 0.4rem 0.5rem 0.65rem;
         display: flex;
         flex-direction: column;
+        flex-shrink: 0;
+        box-sizing: border-box;
       }
       .room-share-code {
-        font-size: 2.35rem;
-        min-height: 3.2rem;
-        padding: 0.7rem 0.3rem 0.65rem;
+        font-size: clamp(1.55rem, 7.5vw, 2.05rem);
+        letter-spacing: 0.22em;
+        padding: 0.4rem 0.25rem 0.38rem;
       }
       #panel-match .room-share { order: 0; }
       #panel-match .online-dot { order: 5; }
       #panel-match #btn-copy-room { order: 6; }
-      #panel-match .match-btns { order: 1; margin-top: 0; margin-bottom: 0.45rem; gap: 0.4rem; }
+      #panel-match .match-btns {
+        order: 1;
+        margin-top: 0.08rem;
+        margin-bottom: 0.4rem;
+        gap: 0.4rem;
+        flex: 0 0 auto;
+        flex-shrink: 0;
+      }
+      #panel-match .match-btns .btn {
+        min-height: 48px;
+        padding-top: 0.55rem;
+        padding-bottom: 0.55rem;
+        flex-shrink: 0;
+        white-space: nowrap;
+        line-height: 1.2;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
       #panel-match .rep-meter { order: 2; }
-      #panel-match .counts { order: 3; }
+      #panel-match .counts { order: 3; flex: 0 0 auto; }
       #panel-match #fold-log { order: 4; }
       #fold-log .fold-label { display: none !important; }
       #fold-log .log { display: block; margin-top: 0.15rem; }
@@ -1595,25 +1884,26 @@
       }
       #overlay-start .modal .sub { display: none; }
       #overlay-start .play-tabs { gap: 0.28rem; margin-bottom: 0.35rem; }
-      #overlay-start .play-tab { padding: 0.32rem 0.25rem; font-size: 0.78rem; }
-      #overlay-start .color-pick-label { font-size: 0.62rem; margin: 0.18rem 0 0.18rem; }
+      #overlay-start .play-tab { padding: 0.42rem 0.3rem; min-height: 2.65rem; height: auto; }
+      #overlay-start .color-pick-label { margin: 0.18rem 0 0.18rem; }
       #overlay-start .color-pick-row { gap: 0.28rem; margin-bottom: 0.32rem; }
-      #overlay-start .color-opt { padding: 0.22rem 0.15rem; font-size: 0.72rem; }
-      #overlay-start .swatch { width: 14px; height: 14px; margin-bottom: 0.12rem; }
+      #overlay-start .color-opt { padding: 0.38rem 0.22rem; min-height: 2.65rem; height: auto; }
+      #overlay-start .swatch { width: 16px; height: 16px; margin-bottom: 0.12rem; }
       #overlay-start .variant-row { gap: 0.28rem; margin-bottom: 0.32rem; }
-      #overlay-start .variant-opt { padding: 0.28rem 0.2rem; }
-      #overlay-start .variant-opt h3 { font-size: 0.82rem; }
-      #overlay-start .variant-opt .variant-size { font-size: 0.6rem; margin-top: 0.04rem; }
+      #overlay-start .variant-opt { padding: 0.38rem 0.25rem; min-height: 2.75rem; height: auto; }
       #overlay-start .diff-grid {
-        grid-template-columns: repeat(6, 1fr);
-        gap: 0.28rem;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.32rem;
         margin: 0.2rem 0 0.4rem;
       }
-      #overlay-start .diff-card { padding: 0.28rem 0.15rem; grid-column: span 2; }
-      #overlay-start .diff-card[data-diff="centurio"] { grid-column: 2 / span 2; }
-      #overlay-start .diff-card[data-diff="caesar"] { grid-column: 4 / span 2; }
-      #overlay-start .diff-card .diff-level { display: none; }
-      #overlay-start .diff-card h3 { font-size: 0.82rem; }
+      #overlay-start .diff-card {
+        padding: 0.42rem 0.28rem;
+        min-height: 2.85rem;
+        height: auto;
+        grid-column: auto;
+      }
+      #overlay-start .diff-card[data-diff="caesar"] { grid-column: 1 / -1; }
+      #overlay-start .diff-card .diff-level { display: block; margin-bottom: 0.12rem; }
       #overlay-start .controls { margin-top: 0.45rem; gap: 0.4rem; }
       #overlay-start #start-actions {
         position: static;
@@ -1758,8 +2048,80 @@
       animation: bootFadeOut 0.55s ease-in forwards;
     }
     .boot-intro[hidden] { display: none !important; }
-    html:not(.android-app):not(.is-native) #boot-intro {
+    /* Desktop web uses overlay-start; native + mobile web keep the boot screen
+       (Tutorial / Reglas entry). Hiding boot on all web broke mobile Netlify. */
+    @media (min-width: 981px) and (hover: hover) and (pointer: fine) {
+      html:not(.android-app):not(.is-native) #boot-intro {
+        display: none !important;
+      }
+    }
+    /* Web mobile boot: keep chrome above frame; buttons always tappable */
+    @media (max-width: 980px), (hover: none) and (pointer: coarse) {
+      html:not(.android-app):not(.is-native) #boot-intro {
+        display: flex !important;
+        padding-top: max(3.4rem, calc(var(--inset-top) + 2.6rem));
+        padding-bottom: calc(var(--nav-gap) + 2.6rem);
+      }
+      html:not(.android-app):not(.is-native) #boot-intro[hidden] {
+        display: none !important;
+      }
+      html:not(.android-app):not(.is-native) .boot-langs,
+      html:not(.android-app):not(.is-native) .boot-sounds {
+        z-index: 220;
+        top: max(0.9rem, calc(var(--inset-top) + 0.55rem));
+      }
+      html:not(.android-app):not(.is-native) .boot-langs {
+        left: max(0.75rem, calc(var(--inset-left) + 0.4rem));
+      }
+      html:not(.android-app):not(.is-native) .boot-sounds {
+        right: max(0.75rem, calc(var(--inset-right) + 0.4rem));
+      }
+      html:not(.android-app):not(.is-native) .boot-frame {
+        position: relative;
+        z-index: 1;
+        pointer-events: auto;
+      }
+      html:not(.android-app):not(.is-native) .boot-greca {
+        pointer-events: none !important;
+        z-index: 0;
+      }
+      html:not(.android-app):not(.is-native) .boot-tile {
+        position: relative;
+        z-index: 2;
+      }
+      html:not(.android-app):not(.is-native) .boot-tile img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      html:not(.android-app):not(.is-native) .boot-actions {
+        position: relative;
+        z-index: 3;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+      }
+      html:not(.android-app):not(.is-native) .boot-actions .btn {
+        pointer-events: auto !important;
+        touch-action: manipulation;
+      }
+      html:not(.android-app):not(.is-native) .page-frame {
+        pointer-events: none !important;
+        z-index: 40;
+      }
+    }
+    /* Web build ships no ad scripts; this keeps any ad chrome out even if injected. */
+    html:not(.android-app):not(.is-native) .lat-ad-banner,
+    html:not(.android-app):not(.is-native) .lat-ad-interstitial,
+    html:not(.android-app):not(.is-native) .lat-ad-buy-fab,
+    html:not(.android-app):not(.is-native) .lat-ad-noads-fab,
+    html:not(.android-app):not(.is-native) .lat-ad-dev-launch,
+    html:not(.android-app):not(.is-native) .lat-metamo {
       display: none !important;
+    }
+    html:not(.android-app):not(.is-native) {
+      --ad-banner-h: 0px;
     }
     .boot-frame {
       position: relative;
@@ -1794,7 +2156,7 @@
       position: absolute;
       top: max(1.15rem, calc(var(--inset-top) + 0.72rem));
       left: max(1.15rem, calc(var(--inset-left) + 0.72rem));
-      z-index: 4;
+      z-index: 20;
       display: block;
     }
     .boot-sounds {
@@ -1815,16 +2177,18 @@
     .boot-langs .lang-menu {
       left: 0;
       top: calc(100% + 8px);
-      z-index: 6;
+      z-index: 30;
     }
     .boot-tile {
       position: relative;
-      width: min(34vw, 132px); height: min(34vw, 132px);
+      width: min(38vw, 148px); height: min(38vw, 148px);
       margin: 0.15rem auto 1rem;
       animation: bootSeal 1.05s cubic-bezier(.2,.8,.2,1) both;
       filter: drop-shadow(0 12px 20px rgba(0,0,0,.48));
+      border-radius: 50%;
+      overflow: hidden;
     }
-    .boot-tile svg { display: block; width: 100%; height: 100%; }
+    .boot-tile svg, .boot-tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
     .boot-title {
       font-family: Cinzel, "Times New Roman", serif;
       font-size: clamp(1.45rem, 6.4vw, 2.05rem);
@@ -1867,6 +2231,10 @@
       left: 0.6rem; right: 0.6rem;
       bottom: calc(0.28rem + var(--nav-gap));
       z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.38em;
       text-align: center;
       font-family: "EB Garamond", Garamond, serif;
       font-size: 0.62rem;
@@ -1901,7 +2269,7 @@
     }
     html.android-app,
     html.is-native {
-      --nav-gap: max(var(--inset-bottom), var(--android-inset-bottom), 5.25rem);
+      --nav-gap: var(--bottom-chrome, 0px);
     }
     html.android-app .move-dock,
     html.is-native .move-dock {
@@ -1913,57 +2281,109 @@
     }
     html.android-app header.hero,
     html.is-native header.hero {
-      grid-template-columns: max-content minmax(0, 1fr) max-content;
-      column-gap: 0.4rem;
+      display: grid;
+      grid-template-columns: minmax(3.4rem, 1fr) minmax(0, auto) minmax(3.4rem, 1fr);
+      align-items: center;
+      column-gap: 0.28rem;
       padding-top: max(0.62rem, calc(var(--inset-top) + 0.42rem));
       padding-left: max(0.7rem, calc(var(--inset-left) + 0.35rem));
       padding-right: max(0.7rem, calc(var(--inset-right) + 0.35rem));
-      overflow: hidden;
+      overflow: visible;
+      z-index: 80;
+      position: relative;
+      width: 100%;
+      box-sizing: border-box;
+      --hero-title-bias: 0px;
+    }
+    html.android-app header.hero:has(.hero-end .lat-ad-noads-fab:not([hidden])),
+    html.is-native header.hero:has(.hero-end .lat-ad-noads-fab:not([hidden])) {
+      --hero-title-bias: 0px;
     }
     html.android-app .hero-tools,
     html.is-native .hero-tools,
     html.android-app .hero-end,
     html.is-native .hero-end {
-      z-index: 3;
+      z-index: 90;
+      position: relative;
+    }
+    html.android-app .hero-tools,
+    html.is-native .hero-tools {
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: start;
+      align-self: center;
+      padding-left: 0;
+    }
+    html.android-app .hero-end,
+    html.is-native .hero-end {
+      grid-column: 3;
+      grid-row: 1;
+      justify-self: end;
+      align-self: center;
+      padding-right: 0;
+      gap: 0.28rem;
+      display: flex;
+      align-items: center;
     }
     html.android-app .hero-title,
     html.is-native .hero-title {
-      width: 100%;
-      max-width: 100%;
+      position: relative;
+      left: auto;
+      right: auto;
+      top: auto;
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: center;
+      align-self: center;
+      width: max-content;
+      max-width: min(70vw, 16rem);
       min-width: 0;
-      overflow: hidden;
-      justify-self: stretch;
-      container-type: inline-size;
+      overflow: visible;
+      text-align: center;
+      z-index: 85;
+      pointer-events: none;
+      container-type: normal;
+      transform: translateX(-0.28rem);
+    }
+    html.android-app header.hero:not(:has(.hero-end .lat-ad-noads-fab:not([hidden]))) .hero-title,
+    html.is-native header.hero:not(:has(.hero-end .lat-ad-noads-fab:not([hidden]))) .hero-title {
+      max-width: min(78vw, 17rem);
+    }
+    html.android-app .hero-title button,
+    html.is-native .hero-title button {
+      pointer-events: auto;
     }
     html.android-app header.hero h1,
     html.is-native header.hero h1 {
       max-width: 100%;
-      overflow: hidden;
+      width: auto;
+      overflow: visible;
+      margin: 0;
     }
     html.android-app header.hero h1 button,
     html.is-native header.hero h1 button {
-      font-size: clamp(1.02rem, 4.6vw, 1.52rem);
-      font-size: clamp(1.02rem, 9.2cqi, 1.52rem);
+      font-size: clamp(1.14rem, 5.4vw, 1.72rem);
       font-weight: 600;
       letter-spacing: 0.06em;
-      padding: 0.08em 0.06em 0.06em 0.1em;
+      padding: 0.08em 0.1em 0.06em 0.04em;
       max-width: 100%;
       box-sizing: border-box;
       white-space: nowrap;
-      overflow: hidden;
+      overflow: visible;
       text-overflow: clip;
+      color: #edd089;
     }
     html.android-app body.is-tutorial header.hero,
     html.is-native body.is-tutorial header.hero {
-      grid-template-columns: max-content minmax(0, 1fr);
+      grid-template-columns: minmax(3.4rem, 1fr) minmax(0, auto) minmax(3.4rem, 1fr);
+      --hero-title-bias: 0px;
     }
     html.android-app body.is-tutorial header.hero h1 button,
     html.is-native body.is-tutorial header.hero h1 button {
       font-size: clamp(1.28rem, 6.4vw, 1.92rem);
-      font-size: clamp(1.28rem, 11.6cqi, 1.92rem);
       font-weight: 600;
       letter-spacing: 0.11em;
-      padding: 0.08em 0.1em 0.06em 0.12em;
+      padding: 0.08em 0.11em 0.06em 0.11em;
     }
     html.android-app .boot-title,
     html.is-native .boot-title {
@@ -1978,10 +2398,11 @@
     html.android-app .boot-frame,
     html.is-native .boot-frame {
       overflow: visible;
-      margin-left: max(0.55rem, var(--inset-left));
-      margin-right: max(0.55rem, var(--inset-right));
-      padding-left: max(1.35rem, calc(var(--inset-left) + 1.2rem));
-      padding-right: max(1.35rem, calc(var(--inset-right) + 1.2rem));
+      width: min(34rem, calc(100% - 1.1rem));
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 1.55rem;
+      padding-right: 1.55rem;
     }
     html.android-app #overlay-start,
     html.is-native #overlay-start {
@@ -2070,27 +2491,7 @@
       <div class="boot-greca boot-greca-l" aria-hidden="true"></div>
       <div class="boot-greca boot-greca-r" aria-hidden="true"></div>
       <div class="boot-tile">
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <defs>
-            <radialGradient id="bootField" cx="34%" cy="26%" r="78%">
-              <stop offset="0%" stop-color="#6b1c28"/>
-              <stop offset="100%" stop-color="#16070a"/>
-            </radialGradient>
-            <linearGradient id="bootGold" x1="22" y1="16" x2="78" y2="86" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#f7ebb8"/>
-              <stop offset="46%" stop-color="#e0c36a"/>
-              <stop offset="100%" stop-color="#8f6c1c"/>
-            </linearGradient>
-          </defs>
-          <rect width="100" height="100" rx="18" fill="url(#bootField)"/>
-          <circle cx="50" cy="50" r="42" fill="none" stroke="url(#bootGold)" stroke-width="2.2"/>
-          <circle cx="50" cy="50" r="35.5" fill="none" stroke="#e8cc6a" stroke-width="1.1"/>
-          <path fill="none" stroke="url(#bootGold)" stroke-width="1.35" d="M32 16h6V12h6v4h6V12h6v4H62"/>
-          <path fill="none" stroke="url(#bootGold)" stroke-width="1.35" d="M84 32v6h4v6h-4v6h4v6h-4V62"/>
-          <path fill="none" stroke="url(#bootGold)" stroke-width="1.35" d="M68 84h-6v4h-6v-4h-6v4h-6v-4H32"/>
-          <path fill="none" stroke="url(#bootGold)" stroke-width="1.35" d="M16 68v-6h-4v-6h4v-6h-4v-6h4V32"/>
-          <path fill="url(#bootGold)" d="M42.1 33.8h7.15v2.35h-4.4V62.1h14.55v3.45H42.1z"/>
-        </svg>
+        <img src="brand/boot-tile.png" alt="" width="512" height="512" decoding="async" />
       </div>
       <p class="boot-title">LATRVNCVLI</p>
       <p class="boot-sub">LVDVS LATRVNCULORVM</p>
@@ -2101,7 +2502,7 @@
         <button class="btn" id="boot-rules" type="button" data-i18n="rules">Reglas</button>
       </div>
     </div>
-    <p class="boot-colophon">Made with <span class="heart" aria-hidden="true">❤️</span> by Metamovidas</p>
+    <p class="boot-colophon"><span>Made with</span> <span class="heart" aria-hidden="true">❤️</span> <span>by Metamovidas</span></p>
   </div>
   <header class="hero">
     <div class="hero-tools">
@@ -2118,6 +2519,7 @@
       </div>
     </div>
     <div class="hero-title">
+      <img class="hero-logo" src="/brand/icon-full.png" alt="" width="512" height="512" decoding="async" />
       <h1><button type="button" id="title-reload" data-i18n-title="menu" title="Menú principal">LATRVNCVLI</button></h1>
     </div>
     <div class="hero-end">
@@ -2180,7 +2582,6 @@
             <p class="coach-body" id="coach-body"></p>
             <p class="coach-task" id="coach-task"></p>
           </div>
-          <div class="coach-more" id="coach-more" hidden><span>↓</span> <em data-i18n="scroll_more">Desliza para seguir</em></div>
           <div class="coach-dots" id="coach-dots"></div>
           <div class="controls coach-btns">
             <button class="btn" id="btn-coach-prev" type="button" data-i18n="prev">Anterior</button>
@@ -2218,7 +2619,6 @@
         </div>
         <div class="controls match-btns">
           <button class="btn primary" id="btn-reset" type="button" data-i18n="new_game">Nueva partida</button>
-          <button class="btn" id="btn-resign" type="button" data-i18n="resign">Rendirse</button>
         </div>
       </aside>
     </div>
@@ -2324,6 +2724,8 @@
     </div>
   </div>
 
+  <script src="native/game-state-validator.js"></script>
+
   <div class="overlay" id="overlay-win" aria-hidden="true">
     <div class="modal">
       <h2 id="win-title">VICTORIA</h2>
@@ -2345,7 +2747,10 @@
       if (!el) return;
       const isNative = document.documentElement.classList.contains("android-app")
         || document.documentElement.classList.contains("is-native");
-      if (!isNative) {
+      /* Desktop web keeps overlay-start as entry; mobile web matches the app boot menu. */
+      const isDesktopWeb = !isNative && window.matchMedia
+        && window.matchMedia("(min-width: 981px) and (hover: hover) and (pointer: fine)").matches;
+      if (isDesktopWeb) {
         el.hidden = true;
         el.classList.remove("ready", "out");
         window.latrunculiDismissIntro = function () {};
@@ -2353,19 +2758,27 @@
         return;
       }
       const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const hide = () => {
-        if (el.hidden || el.classList.contains("out")) return;
+      const hide = (instant) => {
+        if (el.hidden) return;
+        /* Instant when entering play/tutorial: fade would flash the boot menu under the closing overlay. */
+        if (instant === true || reduce) {
+          el.classList.remove("out", "ready");
+          el.hidden = true;
+          return;
+        }
+        if (el.classList.contains("out")) return;
         el.classList.add("out");
-        window.setTimeout(() => { if (el.classList.contains("out")) el.hidden = true; }, reduce ? 80 : 560);
+        window.setTimeout(() => { if (el.classList.contains("out")) el.hidden = true; }, 560);
       };
       const show = () => {
         el.hidden = false;
+        el.style.removeProperty("display");
         el.classList.remove("out");
         el.classList.add("ready");
       };
       window.latrunculiDismissIntro = hide;
       window.latrunculiShowIntro = show;
-      window.setTimeout(() => el.classList.add("ready"), reduce ? 0 : 1100);
+      el.classList.add("ready");
     })();
 
     const RANKS = 8;
@@ -2418,6 +2831,22 @@
         whites: "Blancas", blacks: "Negras", out: "Fuera", register: "Registro",
         log_empty: "",
         new_game: "Nueva partida", resign: "Rendirse",
+        back_menu: "Volver al Menú",
+        offer_draw: "Proponer tablas",
+        draw_title: "TABLAS",
+        draw_sub: "La partida termina en empate.",
+        draw_offer_confirm: "¿Proponer tablas al rival?",
+        draw_offer_incoming: "El rival propone tablas. ¿Aceptas?",
+        draw_waiting: "Esperando respuesta a las tablas…",
+        draw_cooldown: "Debes esperar unos turnos para volver a proponer tablas.",
+        draw_declined_you: "Has rechazado las tablas.",
+        draw_declined_them: "El rival ha rechazado las tablas.",
+        reason_draw_material: "Material insuficiente para forzar la victoria.",
+        reason_draw_fifty: "50 movimientos por bando sin captura.",
+        reason_draw_repetition: "La misma posición se ha repetido tres veces.",
+        reason_draw_stalemate: "Ahogo: no hay movimientos legales (empate).",
+        reason_draw_agree: "Ambos jugadores aceptaron las tablas.",
+        status_draw: "Tablas. {how}",
         start_sub: "Elige cómo quieres jugar",
         start_sub_ai: "Elige bando y dificultad",
         start_sub_online: "Elige bando y abre sala o entra en una ajena",
@@ -2553,6 +2982,22 @@
         whites: "White", blacks: "Black", out: "Off", register: "Record",
         log_empty: "",
         new_game: "New game", resign: "Resign",
+        back_menu: "Back to menu",
+        offer_draw: "Offer draw",
+        draw_title: "DRAW",
+        draw_sub: "The game ends in a draw.",
+        draw_offer_confirm: "Offer a draw to your opponent?",
+        draw_offer_incoming: "Your opponent offers a draw. Accept?",
+        draw_waiting: "Waiting for a reply to the draw offer…",
+        draw_cooldown: "Wait a few turns before offering a draw again.",
+        draw_declined_you: "You declined the draw.",
+        draw_declined_them: "Your opponent declined the draw.",
+        reason_draw_material: "Insufficient material to force a win.",
+        reason_draw_fifty: "50 moves per side without a capture.",
+        reason_draw_repetition: "The same position occurred three times.",
+        reason_draw_stalemate: "Stalemate: no legal moves (draw).",
+        reason_draw_agree: "Both players agreed to a draw.",
+        status_draw: "Draw. {how}",
         start_sub: "Choose how you want to play",
         start_sub_ai: "Choose a side and a difficulty",
         start_sub_online: "Choose a side, then host or join a room",
@@ -2688,6 +3133,22 @@
         whites: "Blancs", blacks: "Noirs", out: "Hors", register: "Registre",
         log_empty: "",
         new_game: "Nouvelle partie", resign: "Abandonner",
+        back_menu: "Retour au menu",
+        offer_draw: "Proposer nulle",
+        draw_title: "NULLE",
+        draw_sub: "La partie se termine par une nulle.",
+        draw_offer_confirm: "Proposer la nulle à l'adversaire ?",
+        draw_offer_incoming: "L'adversaire propose la nulle. Accepter ?",
+        draw_waiting: "En attente de réponse à la nulle…",
+        draw_cooldown: "Attends quelques tours avant de reproposer la nulle.",
+        draw_declined_you: "Tu as refusé la nulle.",
+        draw_declined_them: "L'adversaire a refusé la nulle.",
+        reason_draw_material: "Matériel insuffisant pour forcer la victoire.",
+        reason_draw_fifty: "50 coups par camp sans prise.",
+        reason_draw_repetition: "La même position s'est répétée trois fois.",
+        reason_draw_stalemate: "Pat : aucun coup légal (nulle).",
+        reason_draw_agree: "Les deux joueurs ont accepté la nulle.",
+        status_draw: "Nulle. {how}",
         start_sub: "Choisis comment tu veux jouer",
         start_sub_ai: "Choisis un camp et une difficulté",
         start_sub_online: "Choisis un camp, puis ouvre une salle ou rejoins-en une",
@@ -2823,6 +3284,22 @@
         whites: "Белые", blacks: "Чёрные", out: "Вне", register: "Запись",
         log_empty: "",
         new_game: "Новая партия", resign: "Сдаться",
+        back_menu: "В меню",
+        offer_draw: "Предложить ничью",
+        draw_title: "НИЧЬЯ",
+        draw_sub: "Партия завершилась ничьей.",
+        draw_offer_confirm: "Предложить ничью сопернику?",
+        draw_offer_incoming: "Соперник предлагает ничью. Принять?",
+        draw_waiting: "Ожидание ответа на ничью…",
+        draw_cooldown: "Подожди несколько ходов, прежде чем снова предлагать ничью.",
+        draw_declined_you: "Ты отклонил ничью.",
+        draw_declined_them: "Соперник отклонил ничью.",
+        reason_draw_material: "Недостаточно материала для победы.",
+        reason_draw_fifty: "50 ходов каждой стороны без взятия.",
+        reason_draw_repetition: "Одна и та же позиция повторилась трижды.",
+        reason_draw_stalemate: "Пат: нет легальных ходов (ничья).",
+        reason_draw_agree: "Оба игрока согласились на ничью.",
+        status_draw: "Ничья. {how}",
         start_sub: "Выбери, как хочешь играть",
         start_sub_ai: "Выбери сторону и сложность",
         start_sub_online: "Выбери сторону, затем создай комнату или войди в чужую",
@@ -2947,8 +3424,18 @@
         const saved = localStorage.getItem("latrunculi-lang");
         if (saved && I18N[saved]) return saved;
       } catch (e) {}
-      const nav = String((navigator.language || "es").slice(0, 2)).toLowerCase();
-      return I18N[nav] ? nav : "es";
+      const list = [];
+      try {
+        if (navigator.languages) {
+          for (let i = 0; i < navigator.languages.length; i++) list.push(navigator.languages[i]);
+        }
+      } catch (e) {}
+      try { if (navigator.language) list.push(navigator.language); } catch (e) {}
+      for (let i = 0; i < list.length; i++) {
+        const nav = String(list[i] || "").slice(0, 2).toLowerCase();
+        if (I18N[nav]) return nav;
+      }
+      return "es";
     }
     function t(key, vars) {
       const pack = I18N[state.lang] || I18N.es;
@@ -3177,10 +3664,13 @@
       posCounts: {},
       movesFromPos: {},
       posLog: [],
-      playOnce: ""
+      playOnce: "",
+      halfmoveClock: 0
     };
 
     let audioCtx = null;
+    let noiseBuf = null;
+    let sfxBusNode = null;
     const music = { nodes: [], timer: 0, gain: null, step: 0 };
     const ROOM_ALPH = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     const MQTT_URLS = [
@@ -3373,14 +3863,35 @@
       return raw.filter((m) => !used.has(moveKey(m)));
     }
 
-    function winnerAfter(board, mover) {
+    function winnerAfter(board, mover, opts) {
+      const GSV = window.GameStateValidator;
       const opp = 3 - mover;
+      const visits = (opts && opts.repetitionCount != null)
+        ? opts.repetitionCount
+        : (state.posCounts[posKey(board, opp)] || 0);
+      const half = (opts && opts.halfmoveClock != null)
+        ? opts.halfmoveClock
+        : state.halfmoveClock;
+      if (GSV && typeof GSV.evaluateAfterMove === "function") {
+        return GSV.evaluateAfterMove({
+          board: board,
+          mover: mover,
+          game: "latrunculi",
+          hasDux: true,
+          kingImmobilized: kingImmobilized,
+          countPawns: countPawns,
+          getMoves: function (b, p) { return getMoves(b, p); },
+          halfmoveClock: half,
+          repetitionCount: visits
+        });
+      }
       if (kingImmobilized(board, opp)) return { winner: mover, reason: "dux" };
       if (kingImmobilized(board, mover)) return { winner: opp, reason: "dux-self" };
       if (countPawns(board, opp) === 0) return { winner: mover, reason: "lone-king" };
       if (getMoves(board, opp).length === 0) return { winner: mover, reason: "immobile" };
       return null;
     }
+
 
     function recordArrival(board, turn) {
       const k = posKey(board, turn);
@@ -3550,6 +4061,16 @@
     }
 
     function evaluateMaterial(board, ai) {
+      const GSV = window.GameStateValidator;
+      if (GSV && typeof GSV.evaluateQuiet === "function") {
+        const quiet = GSV.evaluateQuiet(board, ai, {
+          kingImmobilized: kingImmobilized,
+          countPawns: countPawns,
+          getMovesRaw: getMovesRaw,
+          getMoves: getMovesRaw
+        }, "latrunculi");
+        if (quiet !== null && quiet !== undefined) return quiet;
+      }
       const opp = 3 - ai;
       if (kingImmobilized(board, opp)) return 8000;
       if (kingImmobilized(board, ai)) return -8000;
@@ -3602,6 +4123,19 @@
 
     function alphabeta(board, depth, alpha, beta, maximizing, ai, toMove, evalFn) {
       if (timedOut()) return null;
+      const GSV = window.GameStateValidator;
+      if (GSV && typeof GSV.evaluateQuiet === "function") {
+        const quiet = GSV.evaluateQuiet(board, ai, {
+          kingImmobilized: kingImmobilized,
+          countPawns: countPawns,
+          getMovesRaw: getMovesRaw,
+          getMoves: getMovesRaw
+        }, "latrunculi");
+        if (quiet !== null && quiet !== undefined && Math.abs(quiet) >= 8500) {
+          return quiet > 0 ? quiet + depth : quiet - depth;
+        }
+        if (quiet === 0) return 0;
+      }
       if (kingImmobilized(board, 3 - ai)) return 9000 + depth;
       if (kingImmobilized(board, ai)) return -9000 - depth;
       if (countPawns(board, 3 - ai) === 0) return 8500 + depth;
@@ -3644,9 +4178,10 @@
         if (timedOut()) { complete = false; break; }
         const nb = cloneBoard(board);
         applyMove(nb, m);
-        const ended = winnerAfter(nb, ai);
+        const ended = winnerAfter(nb, ai, { halfmoveClock: 0, repetitionCount: 0 });
         let s;
-        if (ended && ended.winner === ai) s = 10000;
+        if (ended && !ended.winner) s = 0;
+        else if (ended && ended.winner === ai) s = 10000;
         else if (ended) s = -10000;
         else s = alphabeta(nb, depth - 1, -Infinity, Infinity, false, ai, 3 - ai, evalFn);
         if (s === null) { complete = false; break; }
@@ -3765,37 +4300,141 @@
     function startMusic() {
       return;
     }
-    function tone(freq, dur, type, gain) {
-      if (!state.sfxOn || !audioCtx) return;
+    function isMobileAudio() {
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "")
+        || (window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+    }
+    function canSfx() {
+      return state.sfxOn && audioCtx;
+    }
+
+    /* Shared bus: pieces stay clearly audible at mid phone volume so ads don’t blast. */
+    const SFX_BUS = 1.55;
+
+    function sfxBus() {
+      if (!audioCtx) return null;
+      if (!sfxBusNode) {
+        sfxBusNode = audioCtx.createGain();
+        sfxBusNode.gain.value = SFX_BUS;
+        sfxBusNode.connect(audioCtx.destination);
+      }
+      return sfxBusNode;
+    }
+
+    function getNoise() {
+      if (!audioCtx) return null;
+      if (noiseBuf) return noiseBuf;
+      const n = Math.max(1, (audioCtx.sampleRate * 0.28) | 0);
+      noiseBuf = audioCtx.createBuffer(1, n, audioCtx.sampleRate);
+      const d = noiseBuf.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+      return noiseBuf;
+    }
+
+    function clickWood(peak, hp) {
+      if (!canSfx()) return;
       const ctx = audioCtx;
+      const out = sfxBus();
+      if (!out) return;
       const play = () => {
+        const buf = getNoise();
+        if (!buf) return;
         const t0 = ctx.currentTime;
-        const osc = ctx.createOscillator();
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        const bp = ctx.createBiquadFilter();
+        bp.type = "bandpass";
+        bp.frequency.value = hp || 780;
+        bp.Q.value = 1.35;
         const g = ctx.createGain();
-        osc.type = type || "sine";
-        osc.frequency.setValueAtTime(freq, t0);
         g.gain.setValueAtTime(0.0001, t0);
-        g.gain.exponentialRampToValueAtTime(gain || 0.12, t0 + 0.018);
-        g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-        osc.connect(g); g.connect(ctx.destination);
-        osc.start(t0); osc.stop(t0 + dur + 0.03);
+        g.gain.exponentialRampToValueAtTime(peak, t0 + 0.004);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.1);
+        src.connect(bp);
+        bp.connect(g);
+        g.connect(out);
+        src.start(t0);
+        src.stop(t0 + 0.12);
       };
       if (ctx.state === "suspended") ctx.resume().then(play).catch(() => {});
       else play();
     }
-    function sfxMove() { tone(392, 0.16, "triangle", 0.12); }
-    function sfxCapture() { tone(392, 0.11, "triangle", 0.13); setTimeout(() => tone(523, 0.16, "sine", 0.13), 40); }
-    function sfxWin() { tone(523, 0.22, "sine", 0.1); setTimeout(() => tone(784, 0.38, "sine", 0.1), 120); }
-    function sfxLose() { tone(196, 0.42, "sawtooth", 0.07); }
+
+    function tone(freq, dur, type, gain) {
+      if (!canSfx()) return;
+      if (!audioCtx || audioCtx.state !== "running") unlockAudio();
+      if (!audioCtx) return;
+      const ctx = audioCtx;
+      const out = sfxBus();
+      if (!out) return;
+      const play = () => {
+        if (!state.sfxOn) return;
+        const t0 = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        const f = ctx.createBiquadFilter();
+        const peak = gain || (isMobileAudio() ? 0.26 : 0.12);
+        osc.type = type || "sine";
+        osc.frequency.setValueAtTime(freq, t0);
+        f.type = "lowpass";
+        f.frequency.value = 2400;
+        g.gain.setValueAtTime(0.0001, t0);
+        g.gain.exponentialRampToValueAtTime(peak, t0 + 0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+        osc.connect(f);
+        f.connect(g);
+        g.connect(out);
+        osc.start(t0);
+        osc.stop(t0 + dur + 0.03);
+      };
+      if (ctx.state === "suspended") {
+        ctx.resume().then(play).catch(() => {});
+        return;
+      }
+      play();
+    }
+
+    function sfxMove() {
+      const hot = isMobileAudio();
+      clickWood(hot ? 0.4 : 0.26, 640);
+      tone(196, 0.12, "sine", hot ? 0.24 : 0.12);
+      tone(392, 0.08, "triangle", hot ? 0.15 : 0.08);
+    }
+    function sfxCapture() {
+      /* Capture only — never layer the land/move thud underneath. */
+      const hot = isMobileAudio();
+      clickWood(hot ? 0.4 : 0.26, 980);
+      tone(523.25, 0.16, "triangle", hot ? 0.24 : 0.12);
+      tone(784, 0.22, "sine", hot ? 0.16 : 0.09);
+      setTimeout(() => {
+        tone(659.25, 0.18, "triangle", hot ? 0.18 : 0.1);
+      }, 70);
+    }
+    function sfxWin() {
+      const hot = isMobileAudio();
+      [329.63, 392, 493.88, 659.25].forEach((f, i) => {
+        setTimeout(() => tone(f, 0.3, "triangle", hot ? 0.22 : 0.12), i * 95);
+      });
+    }
+    function sfxLose() {
+      const hot = isMobileAudio();
+      tone(196, 0.28, "triangle", hot ? 0.2 : 0.1);
+      setTimeout(() => tone(146.83, 0.48, "sine", hot ? 0.22 : 0.11), 90);
+    }
     function sfxClick() {
-      tone(196, 0.06, "square", 0.09);
-      tone(294, 0.08, "triangle", 0.11);
+      const hot = isMobileAudio();
+      tone(196, 0.06, "triangle", hot ? 0.16 : 0.09);
+      tone(294, 0.08, "triangle", hot ? 0.15 : 0.08);
     }
     function sfxStartGame() {
-      sfxClick();
-      setTimeout(() => tone(392, 0.14, "triangle", 0.14), 70);
-      setTimeout(() => tone(523, 0.16, "triangle", 0.15), 160);
-      setTimeout(() => tone(659, 0.34, "sine", 0.16), 270);
+      const hot = isMobileAudio();
+      tone(246.94, 0.07, "triangle", hot ? 0.16 : 0.09);
+      setTimeout(() => tone(329.63, 0.12, "triangle", hot ? 0.18 : 0.1), 70);
+      setTimeout(() => tone(392.00, 0.16, "triangle", hot ? 0.2 : 0.11), 150);
+      setTimeout(() => tone(493.88, 0.34, "sine", hot ? 0.22 : 0.12), 250);
+    }
+    function sfxTest() {
+      sfxMove();
     }
 
     function randId() {
@@ -4072,10 +4711,6 @@
         applyRemoteMove(msg);
         return;
       }
-      if (msg.t === "resign" && net.started && !state.over) {
-        finishGame({ winner: humanSide(), reason: "resign" });
-        return;
-      }
       if (msg.t === "bye" && (net.started || net.waiting) && !state.over) {
         if (net.waiting && net.role === "guest") {
           setStatus(t("host_closed"));
@@ -4200,6 +4835,7 @@
       state.movesFromPos = {};
       state.posLog = [];
       state.playOnce = "";
+      state.halfmoveClock = 0;
       recordArrival(state.board, BLACK);
     }
 
@@ -4214,10 +4850,10 @@
       layoutBoard();
       document.body.classList.remove("is-idle");
       els.log.innerHTML = '<div class="empty">' + t("log_waiting", { room: net.room }) + "</div>";
-      if (window.latrunculiDismissIntro) window.latrunculiDismissIntro();
       toggleOverlay(els.overlayStart, false);
       toggleOverlay(els.overlayWin, false);
       toggleOverlay(els.overlayHelp, false);
+      if (window.latrunculiDismissIntro) window.latrunculiDismissIntro(true);
       document.body.classList.add("is-online");
       document.body.classList.toggle("is-waiting", !!net.waiting);
       paintRoomShare();
@@ -4254,7 +4890,6 @@
     function startOnlineGame(human) {
       unlockAudio();
       document.body.classList.remove("is-idle");
-      if (window.latrunculiDismissIntro) window.latrunculiDismissIntro();
       state.vs = "net";
       state.human = human;
       resetNetBoard();
@@ -4266,6 +4901,7 @@
       toggleOverlay(els.overlayStart, false);
       toggleOverlay(els.overlayWin, false);
       toggleOverlay(els.overlayHelp, false);
+      if (window.latrunculiDismissIntro) window.latrunculiDismissIntro(true);
       document.body.classList.add("is-online");
       document.body.classList.remove("is-waiting");
       paintRoomShare();
@@ -4273,6 +4909,11 @@
       setNetMsg("");
       paintWhos();
       render();
+      try {
+        if (window.LatrunculiAds && typeof window.LatrunculiAds.onMatchStart === "function") {
+          window.LatrunculiAds.onMatchStart();
+        }
+      } catch (e) {}
     }
 
     async function hostRoom() {
@@ -4327,11 +4968,6 @@
       setNetMsg("");
     }
 
-    function resignOnline() {
-      if (state.vs !== "net" || state.over || state.mode !== "game") return;
-      netPublish({ t: "resign" });
-      finishGame({ winner: 3 - humanSide(), reason: "resign" });
-    }
 
     function buildBoard() {
       els.board.innerHTML = "";
@@ -4689,7 +5325,7 @@
         if (!drag.el) { resolve(); return; }
         const dest = state.cells[r][c].getBoundingClientRect();
         const size = drag.size;
-        drag.el.style.transition = "left 0.13s ease, top 0.13s ease, transform 0.13s ease";
+        drag.el.style.transition = "left 0.13s cubic-bezier(0.25, 1, 0.35, 1), top 0.13s cubic-bezier(0.25, 1, 0.35, 1), transform 0.13s ease-out";
         drag.el.style.left = (dest.left + (dest.width - size) / 2) + "px";
         drag.el.style.top = (dest.top + (dest.height - size) / 2) + "px";
         drag.el.style.transform = "scale(1)";
@@ -4699,6 +5335,11 @@
 
     function destroyHeld() {
       if (drag.el) { drag.el.remove(); drag.el = null; }
+      document.querySelectorAll(".piece.origin-faded").forEach((p) => {
+        p.classList.remove("origin-faded");
+        p.style.visibility = "";
+        p.style.opacity = "";
+      });
       els.board.classList.remove("is-holding");
       document.querySelectorAll(".cell.pressing").forEach((el) => el.classList.remove("pressing"));
       clearDropMarks();
@@ -4838,6 +5479,8 @@
         flyer.style.left = (from.x + (from.w - size) / 2) + "px";
         flyer.style.top = (from.y + (from.h - size) / 2) + "px";
         flyer.style.transition = "none";
+        flyer.style.transform = "none";
+        flyer.style.willChange = "left, top";
         els.board.appendChild(flyer);
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
@@ -4853,10 +5496,10 @@
     function animateCaptures(caps) {
       return new Promise((resolve) => {
         for (const [cr, cc] of caps) {
-          const p = state.cells[cr][cc].querySelector(".piece");
+          const p = state.cells[cr][cc].querySelector(".piece:not(.ghost)");
           if (p) p.classList.add("capturing");
         }
-        setTimeout(resolve, 160);
+        setTimeout(resolve, 140);
       });
     }
 
@@ -4896,9 +5539,13 @@
       }
       if (playAborted(startedMode, token)) { abortPlay(); return; }
       if (state.mode === "game") recordDeparture(state.board, player, move);
+      const destCell = state.cells[move.nr][move.nc];
+      if (destCell && !destCell.querySelector(".piece")) destCell.appendChild(pieceEl(piece));
       applyMove(state.board, move);
       if (player === WHITE) state.captured.black += caps.length;
       else state.captured.white += caps.length;
+      if (caps.length) state.halfmoveClock = 0;
+      else state.halfmoveClock++;
       state.lastMove = { r: move.r, c: move.c, nr: move.nr, nc: move.nc };
       state.ply++;
       if (state.mode === "game") state.turn = 3 - player;
@@ -4979,6 +5626,11 @@
       if (reason === "dux" || reason === "dux-self") return t("reason_dux", { w: w, l: l });
       if (reason === "lone-king") return t("reason_lone", { l: l, l_low: l.toLowerCase() });
       if (reason === "immobile") return t("reason_immobile", { l: l });
+      if (reason === "draw-material") return t("reason_draw_material");
+      if (reason === "draw-fifty") return t("reason_draw_fifty");
+      if (reason === "draw-repetition") return t("reason_draw_repetition");
+      if (reason === "draw-stalemate") return t("reason_draw_stalemate");
+      if (reason === "draw-agree") return t("reason_draw_agree");
       return t("reason_win", { w: w });
     }
 
@@ -4990,18 +5642,34 @@
       state.legal = [];
       render();
       state.lastEnded = ended;
-      const youWin = ended.winner === state.human;
-      els.winTitle.textContent = youWin ? t("victory") : t("surrender");
-      els.winSub.textContent = youWin ? t("win_glory") : t("win_sub", { who: sideName(ended.winner) });
-      const how = reasonText(ended.reason, ended.winner);
+      const isDraw = !ended.winner;
+      const youWin = !isDraw && ended.winner === state.human;
+      if (isDraw) {
+        els.winTitle.textContent = t("draw_title");
+        els.winSub.textContent = t("draw_sub");
+      } else {
+        els.winTitle.textContent = youWin ? t("victory") : t("surrender");
+        els.winSub.textContent = youWin ? t("win_glory") : t("win_sub", { who: sideName(ended.winner) });
+      }
+      const how = reasonText(ended.reason, ended.winner || state.human);
       els.winBody.textContent = how;
-      const status = youWin ? t("status_win", { how: how }) : t("status_lose", { how: how });
+      const status = isDraw
+        ? t("status_draw", { how: how })
+        : (youWin ? t("status_win", { how: how }) : t("status_lose", { how: how }));
       setStatus(status);
       state.resultStatus = status;
       els.overlayWin.classList.add("show");
       els.overlayWin.setAttribute("aria-hidden", "false");
-      if (youWin) sfxWin(); else sfxLose();
+      if (isDraw) {
+        try { sfxMove(); } catch (e) {}
+      } else if (youWin) sfxWin();
+      else sfxLose();
       updateNav();
+      try {
+        if (window.LatrunculiAds && typeof window.LatrunculiAds.onMatchEnd === "function") {
+          window.LatrunculiAds.onMatchEnd();
+        }
+      } catch (e) {}
     }
 
     function toggleOverlay(el, on) {
@@ -5036,17 +5704,23 @@
       state.movesFromPos = {};
       state.posLog = [];
       state.playOnce = "";
+      state.halfmoveClock = 0;
       recordArrival(state.board, BLACK);
       setTutorialUI(false);
       resetHistory();
       layoutBoard();
       els.log.innerHTML = "";
-      if (window.latrunculiDismissIntro) window.latrunculiDismissIntro();
       toggleOverlay(els.overlayStart, false);
       toggleOverlay(els.overlayWin, false);
       toggleOverlay(els.overlayHelp, false);
+      if (window.latrunculiDismissIntro) window.latrunculiDismissIntro(true);
       paintTurnStatus();
       render();
+      try {
+        if (window.LatrunculiAds && typeof window.LatrunculiAds.onMatchStart === "function") {
+          window.LatrunculiAds.onMatchStart();
+        }
+      } catch (e) {}
       if (state.vs === "ai" && state.turn === aiSide()) {
         state.busy = true;
         paintTurnStatus(true);
@@ -5057,10 +5731,21 @@
       }
     }
 
+    function resetPageScroll() {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      const layout = document.querySelector(".layout");
+      if (layout) layout.scrollTop = 0;
+      const coach = document.querySelector("#guide-coach .coach-scroll");
+      if (coach) coach.scrollTop = 0;
+    }
+
     function setTutorialUI(on) {
       document.body.classList.toggle("is-tutorial", on);
       if (els.guidePlay) els.guidePlay.hidden = on;
       if (els.guideCoach) els.guideCoach.hidden = !on;
+      resetPageScroll();
     }
 
     function paintCoach(opts) {
@@ -5072,11 +5757,18 @@
       els.coachTotal.textContent = String(LESSONS.length);
       els.coachTitle.textContent = t("l" + state.lesson + "_title");
       els.coachBody.textContent = praise ? t("l" + state.lesson + "_praise") : t("l" + state.lesson + "_body");
-      if (praise) { els.coachTask.textContent = ""; els.coachTask.hidden = true; }
+      if (praise) {
+        els.coachTask.textContent = "\u00a0";
+        els.coachTask.hidden = false;
+        els.coachTask.style.visibility = "hidden";
+        els.coachTask.setAttribute("aria-hidden", "true");
+      }
       else {
         const taskText = fail ? t("l" + state.lesson + "_fail") : t("l" + state.lesson + "_task");
-        els.coachTask.textContent = taskText;
+        els.coachTask.textContent = taskText || "\u00a0";
         els.coachTask.hidden = !taskText;
+        els.coachTask.style.visibility = taskText ? "visible" : "hidden";
+        els.coachTask.setAttribute("aria-hidden", taskText ? "false" : "true");
       }
       els.coachTask.classList.toggle("bad", !!fail);
       els.coachTask.classList.toggle("ok", !!praise);
@@ -5087,15 +5779,19 @@
       const pieceKey = document.getElementById("coach-piece-key");
       if (pieceKey) pieceKey.hidden = !(lesson && lesson.showPieces);
       updateCoachNav();
-      requestAnimationFrame(paintCoachMore);
+      requestAnimationFrame(syncCoachScrollHint);
+    }
+    function syncCoachScrollHint() {
+      const coach = document.getElementById("guide-coach");
+      const sc = document.querySelector("#guide-coach .coach-scroll");
+      if (!coach || !sc) return;
+      const canScroll = sc.scrollHeight > sc.clientHeight + 6;
+      const moreBelow = canScroll && sc.scrollTop + sc.clientHeight < sc.scrollHeight - 6;
+      coach.classList.toggle("has-overflow", canScroll);
+      coach.classList.toggle("has-scroll-more", moreBelow);
     }
     function paintCoachMore() {
-      const more = document.getElementById("coach-more");
-      const sc = document.querySelector("#guide-coach .coach-scroll");
-      if (!more || !sc) return;
-      const overflow = sc.scrollHeight > sc.clientHeight + 8 && sc.scrollTop + sc.clientHeight < sc.scrollHeight - 8;
-      more.hidden = !overflow;
-      more.classList.toggle("show", overflow);
+      syncCoachScrollHint();
     }
 
     function updateCoachNav() {
@@ -5131,7 +5827,7 @@
       if (lesson.hint) selectPiece(lesson.hint[0], lesson.hint[1]);
       updateCoachNav();
       updateNav();
-      requestAnimationFrame(paintCoachMore);
+      requestAnimationFrame(syncCoachScrollHint);
     }
 
     function startTutorial() {
@@ -5162,7 +5858,7 @@
       toggleOverlay(els.overlayStart, false);
       toggleOverlay(els.overlayWin, false);
       toggleOverlay(els.overlayHelp, false);
-      if (window.latrunculiDismissIntro) window.latrunculiDismissIntro();
+      if (window.latrunculiDismissIntro) window.latrunculiDismissIntro(true);
       showLesson();
     }
 
@@ -5199,6 +5895,7 @@
       document.body.classList.remove("is-online", "is-waiting");
       resetHistory();
       layoutBoard();
+      resetPageScroll();
       render();
       paintWhos();
       setStatus(t("idle_status"));
@@ -5331,9 +6028,17 @@
     }
 
     document.getElementById("btn-start-game").addEventListener("click", startGame);
-    document.getElementById("btn-reset").addEventListener("click", () => {
+    function promptNewGame() {
       leaveNet();
+      /* From the board: open match setup (difficulty, color, variant).
+         Never flash the boot menu (Jugar / Tutorial / Reglas). */
+      if (window.latrunculiDismissIntro) window.latrunculiDismissIntro(true);
+      toggleOverlay(els.overlayWin, false);
+      toggleOverlay(els.overlayHelp, false);
       toggleOverlay(els.overlayStart, true);
+    }
+    document.getElementById("btn-reset").addEventListener("click", () => {
+      promptNewGame();
     });
     document.getElementById("btn-learn").addEventListener("click", startTutorial);
     document.getElementById("btn-help").addEventListener("click", () => toggleOverlay(els.overlayHelp, true));
@@ -5367,15 +6072,26 @@
     document.getElementById("win-again").addEventListener("click", () => {
       leaveNet();
       toggleOverlay(els.overlayWin, false);
+      if (window.latrunculiDismissIntro) window.latrunculiDismissIntro(true);
       toggleOverlay(els.overlayStart, true);
     });
     document.getElementById("win-review").addEventListener("click", () => toggleOverlay(els.overlayWin, false));
     function goMainMenu() {
       closeLangMenu();
+      resetPageScroll();
       toggleOverlay(els.overlayStart, false);
       toggleOverlay(els.overlayHelp, false);
       toggleOverlay(els.overlayWin, false);
-      if (window.latrunculiShowIntro) window.latrunculiShowIntro();
+      if (typeof window.latrunculiShowIntro === "function") window.latrunculiShowIntro();
+      else {
+        const boot = document.getElementById("boot-intro");
+        if (boot) {
+          boot.hidden = false;
+          boot.style.removeProperty("display");
+          boot.classList.remove("out");
+          boot.classList.add("ready");
+        }
+      }
     }
     document.getElementById("title-reload").addEventListener("click", goMainMenu);
     document.querySelectorAll("[data-sound='music']").forEach((btn) => btn.addEventListener("click", toggleMusic));
@@ -5429,7 +6145,6 @@
     els.joinCode.addEventListener("input", () => {
       els.joinCode.value = els.joinCode.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
     });
-    document.getElementById("btn-resign").addEventListener("click", resignOnline);
     if (els.btnCopyRoom) els.btnCopyRoom.addEventListener("click", copyRoomCode);
     if (els.roomShareCode) els.roomShareCode.addEventListener("click", copyRoomCode);
     if (els.onlineDot) els.onlineDot.addEventListener("click", () => { if (net.room) copyRoomCode(); });
@@ -5446,7 +6161,9 @@
     });
     document.getElementById("btn-coach-exit").addEventListener("click", exitTutorial);
     const coachScroll = document.querySelector("#guide-coach .coach-scroll");
-    if (coachScroll) coachScroll.addEventListener("scroll", paintCoachMore, { passive: true });
+    if (coachScroll) {
+      coachScroll.addEventListener("scroll", syncCoachScrollHint, { passive: true });
+    }
     els.coachDots.addEventListener("click", (ev) => {
       const i = ev.target && ev.target.dataset ? ev.target.dataset.i : null;
       if (i == null) return;

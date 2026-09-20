@@ -51,8 +51,8 @@ function ensureKeystore() {
       [
         "ESTE KEYSTORE ES LA LLAVE DE LA PLAY STORE.",
         "Haz una copia de seguridad de latrunculi-upload.jks y de keystore.properties.",
-        "Sin ellos no podrás actualizar la app en Google Play.",
-        "Contraseña: está en keystore.properties (storePassword / keyPassword).",
+        "Sin ellos no podrÃƒÂ¡s actualizar la app en Google Play.",
+        "ContraseÃƒÂ±a: estÃƒÂ¡ en keystore.properties (storePassword / keyPassword).",
         "Alias: upload",
         ""
       ].join("\n")
@@ -90,14 +90,23 @@ function envWithSdk() {
 
 function copyApk() {
   fs.mkdirSync(DIST, { recursive: true });
-  const apk = path.join(ANDROID, "app", "build", "outputs", "apk", "release", "app-release.apk");
-  const aab = path.join(ANDROID, "app", "build", "outputs", "bundle", "release", "app-release.aab");
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+  const ver = pkg.version || "0.0.0";
+  const apk = path.join(ANDROID, "app", "build", "outputs", "apk", "store", "release", "app-store-release.apk");
+  const aab = path.join(ANDROID, "app", "build", "outputs", "bundle", "storeRelease", "app-store-release.aab");
+  const APKS = path.join("C:", "Users", "carlo", "Desktop", "Proyectos", "Android", "APKs");
+  const PLAY = path.join("C:", "Users", "carlo", "Desktop", "Proyectos", "Android", "PlayStore", "Latrunculi");
   if (fs.existsSync(apk)) {
-    fs.copyFileSync(apk, path.join(DIST, "Latrunculi-1.0.18.apk"));
+    fs.copyFileSync(apk, path.join(DIST, "Latrunculi-" + ver + ".apk"));
+    fs.mkdirSync(APKS, { recursive: true });
+    fs.copyFileSync(apk, path.join(APKS, "Latrunculi-" + ver + "-con-publicidad.apk"));
   }
   if (fs.existsSync(aab)) {
-    fs.copyFileSync(aab, path.join(DIST, "Latrunculi-1.0.18.aab"));
+    fs.copyFileSync(aab, path.join(DIST, "Latrunculi-" + ver + ".aab"));
+    fs.mkdirSync(PLAY, { recursive: true });
+    fs.copyFileSync(aab, path.join(PLAY, "Latrunculi-" + ver + ".aab"));
   }
+  return ver;
 }
 
 function main() {
@@ -107,13 +116,14 @@ function main() {
     run("npx", ["cap", "add", "android"]);
   }
   run("npx", ["cap", "sync", "android"]);
-  run("node", ["scripts/build-icons.mjs"]);
+  run("npm", ["run", "icons"]);
   const env = envWithSdk();
   const gradlew = path.join(ANDROID, "gradlew.bat");
-  run(gradlew, ["assembleRelease", "bundleRelease", "--no-daemon"], { cwd: ANDROID, env });
-  copyApk();
-  console.log("APK: dist/Latrunculi-1.0.18.apk");
-  console.log("AAB: dist/Latrunculi-1.0.18.aab");
+  run(gradlew, ["assembleStoreRelease", "bundleStoreRelease", "--no-daemon"], { cwd: ANDROID, env });
+  const ver = copyApk();
+  console.log("APK: dist/Latrunculi-" + ver + ".apk");
+  console.log("AAB: dist/Latrunculi-" + ver + ".aab");
 }
 
 main();
+

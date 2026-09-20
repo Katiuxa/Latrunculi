@@ -1,15 +1,17 @@
 {
   "name": "latrunculi",
-    "version": "1.0.18",
+  "version": "1.0.89",
   "private": true,
-  "description": "Ludus Latrunculorum — app Android",
+  "description": "Ludus Latrunculorum. Android app",
   "scripts": {
     "prepare:android": "node scripts/prepare-www.js",
-    "icons": "node scripts/build-icons.mjs",
+    "icons": "node scripts/apply-logo.mjs && node scripts/build-icons.mjs",
     "cap:sync": "npm run prepare:android && npx cap sync android",
-    "apk": "node scripts/build-apk.js"
+    "apk": "node scripts/build-apk.js",
+    "apk:sidecar": "node scripts/build-sidecar-apk.js"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^8.1.0",
     "@capacitor/android": "^8.5.0",
     "@capacitor/app": "^8.1.1",
     "@capacitor/core": "^8.5.0",

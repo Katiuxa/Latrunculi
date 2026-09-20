@@ -13,6 +13,6 @@ if errorlevel 1 (
   exit /b 1
 )
 echo.
-echo APK lista: dist\Latrunculi-1.0.14.apk
-echo AAB Play Store: dist\Latrunculi-1.0.14.aab
+echo APK lista: dist\Latrunculi-1.0.62.apk
+echo AAB Play Store: dist\Latrunculi-1.0.62.aab
 explorer dist
