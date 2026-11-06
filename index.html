@@ -17,7 +17,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cinzel+Decorative:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cinzel+Decorative:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=optional" rel="stylesheet" />
   <style>
     :root {
       --android-inset-top: 0px;
@@ -29,7 +29,7 @@
       --inset-bottom: max(env(safe-area-inset-bottom, 0px), var(--android-inset-bottom));
       --inset-left: max(env(safe-area-inset-left, 0px), var(--android-inset-left));
       --nav-gap: var(--inset-bottom);
-      --coach-dock: clamp(10.8rem, 29dvh, 12.4rem);
+      --coach-dock: clamp(13.5rem, 36svh, 16.5rem);
       --board-files: 8;
       --board-ranks: 8;
       --board-ar: 1;
@@ -105,8 +105,9 @@
       margin: 0 auto -0.1rem;
       filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .35));
     }
-    html:not(.android-app):not(.is-native) body.is-idle .hero-logo {
-      display: block;
+    /* Web: never show the square logo above LATRUNCULI */
+    html:not(.android-app):not(.is-native) .hero-logo {
+      display: none !important;
     }
     .hero-title button { pointer-events: auto; }
     header.hero h1 { margin: 0; }
@@ -411,7 +412,7 @@
       padding: 0.2rem 0.8rem calc(0.75rem + var(--nav-gap));
     }
     footer.colophon .heart { color: #e25555; }
-    #board.is-holding { cursor: grabbing; }
+    #board.is-holding { cursor: pointer; }
     .cell {
       position: relative; display: grid; place-items: center;
       background: #e6d4b0;
@@ -573,17 +574,16 @@
       .piece-key .piece.dux { width: 50px; height: 50px; }
       .piece-key-note { font-size: 0.86rem; }
     }
-    .piece.mine { cursor: pointer; cursor: grab; }
-    .cell:has(.piece.mine) { cursor: pointer; cursor: grab; }
+    .piece.mine { cursor: pointer; }
+    .cell:has(.piece.mine) { cursor: pointer; }
     #board .cell.own,
     #board .cell.own .piece,
     #board .piece.mine {
       cursor: pointer;
-      cursor: grab;
     }
     #board.is-holding,
     #board.is-holding .cell,
-    #board.is-holding .piece { cursor: grabbing; }
+    #board.is-holding .piece { cursor: pointer; }
     .cell.pressing .piece.mine { transform: scale(1.14); filter: brightness(1.08); }
     @media (hover: hover) and (pointer: fine) {
       .piece.mine:hover { transform: translateY(-2px) scale(1.04); }
@@ -602,7 +602,7 @@
       will-change: left, top;
     }
     .piece.held {
-      position: fixed; z-index: 240; pointer-events: none; margin: 0; cursor: grabbing;
+      position: fixed; z-index: 240; pointer-events: none; margin: 0; cursor: pointer;
       transform: scale(1.28); box-shadow: 0 16px 28px rgba(0,0,0,.55), 0 0 0 3px #f0d078;
       transition: transform 0.1s ease-out;
       will-change: left, top, transform;
@@ -938,7 +938,7 @@
       overflow-wrap: anywhere;
       hyphens: auto;
     }
-    @media (min-width: 981px) and (hover: hover) and (pointer: fine) {
+    @media (min-width: 901px) {
       :root {
         --pc-side: 21rem;
         --pc-gap: 0.85rem;
@@ -1074,77 +1074,206 @@
       }
       html:not(.android-app):not(.is-native) .board-column {
         width: auto;
-        max-width: min(100%, calc(100vw - 29rem));
+        max-width: min(100%, calc(100vw - 27rem));
+        max-height: calc(100dvh - 3.6rem);
         min-width: 0;
-        gap: 0.12rem;
+        min-height: 0;
+        gap: 0.08rem;
+        overflow: hidden;
       }
       html:not(.android-app):not(.is-native) body.is-tutorial .board-column {
         max-width: min(44rem, calc(100vw - 36rem));
+        max-height: none;
+        overflow: visible;
       }
       html:not(.android-app):not(.is-native) .board-column .status-pill {
-        font-size: 0.86rem;
-        padding: 0.34rem 0.6rem;
+        font-size: 0.82rem;
+        padding: 0.28rem 0.5rem;
+        flex-shrink: 0;
       }
       html:not(.android-app):not(.is-native) .board-orla {
         width: max-content;
         max-width: 100%;
-        margin-bottom: 0.2rem;
-        flex-shrink: 0;
+        margin-bottom: 0.08rem;
+        flex: 0 1 auto;
+        min-height: 0;
+      }
+      html:not(.android-app):not(.is-native) .board-frame {
+        /* padding = greca size so labels sit just inside the wood, never under the pattern */
+        grid-template-columns: 1.8rem auto;
+        grid-template-rows: minmax(0, auto) 1.45rem;
+        gap: 1px 3px;
+        padding: 16px 16px 16px 16px;
+      }
+      html:not(.android-app):not(.is-native) .greca-t,
+      html:not(.android-app):not(.is-native) .greca-b {
+        height: 16px;
+        background-size: 30px 16px;
+      }
+      html:not(.android-app):not(.is-native) .greca-l,
+      html:not(.android-app):not(.is-native) .greca-r {
+        top: 16px;
+        bottom: 16px;
+        width: 16px;
+      }
+      html:not(.android-app):not(.is-native) .greca-l::after,
+      html:not(.android-app):not(.is-native) .greca-r::after {
+        height: 16px;
+        background-size: 30px 16px;
+      }
+      html:not(.android-app):not(.is-native) .rows {
+        position: relative;
+        z-index: 4;
+        font-size: 0.8rem;
+        letter-spacing: 0;
+      }
+      html:not(.android-app):not(.is-native) .rows span {
+        font-size: 0.74rem;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      html:not(.android-app):not(.is-native) .cols {
+        position: relative;
+        z-index: 4;
+        min-height: 1.45rem;
+        font-size: 0.84rem;
+        letter-spacing: 0.02em;
+        line-height: 1;
       }
       html:not(.android-app):not(.is-native) .move-dock {
-        min-height: 58px;
+        min-height: 50px;
         flex-shrink: 0;
+        padding: 0 2px 1px;
+      }
+      html:not(.android-app):not(.is-native) .move-dock .nav-btn {
+        height: 34px;
+      }
+      html:not(.android-app):not(.is-native) .move-dock .nav-btn svg {
+        width: 22px;
+        height: 15px;
+      }
+      html:not(.android-app):not(.is-native) .move-dock #ply-slider {
+        height: 22px;
       }
       html:not(.android-app):not(.is-native) #board {
-        width: min(720px, calc(100dvh - 17.2rem), calc(100vw - 31rem));
+        width: min(620px, calc(100dvh - 15.4rem), calc(100vw - 28rem));
       }
       html:not(.android-app):not(.is-native) body.is-tutorial #board {
-        width: min(680px, calc(100dvh - 15.2rem), calc(100vw - 31rem));
+        width: min(580px, calc(100dvh - 13.8rem), calc(100vw - 28rem));
       }
       html:not(.android-app):not(.is-native) body.is-britania #board {
         width: min(
-          calc((100dvh - 17.2rem) * 1.5),
-          calc(100vw - 35rem),
-          1040px
+          calc((100dvh - 15.4rem) * 1.5),
+          calc(100vw - 32rem),
+          960px
         );
       }
       html:not(.android-app):not(.is-native) .side-stack {
-        max-height: calc(100dvh - 7.5rem);
-        overflow: auto;
+        margin-top: 0;
+        max-height: calc(100dvh - 3.8rem);
+        overflow-x: hidden;
+        overflow-y: auto;
         min-width: 0;
         width: 100%;
+        max-width: 100%;
+        align-self: start;
+        scrollbar-gutter: auto;
+      }
+      html:not(.android-app):not(.is-native) .side-stack .side-panel,
+      html:not(.android-app):not(.is-native) .side-stack #panel-match,
+      html:not(.android-app):not(.is-native) .side-stack .counts,
+      html:not(.android-app):not(.is-native) .side-stack .match-btns,
+      html:not(.android-app):not(.is-native) .side-stack .btn {
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+      html:not(.android-app):not(.is-native) .side-stack #panel-match {
+        overflow-x: hidden;
       }
       html:not(.android-app):not(.is-native) body.is-tutorial .side-stack {
         max-height: none;
         overflow: visible;
         max-width: 32rem;
       }
+      html:not(.android-app):not(.is-native) body.is-tutorial #panel-rules,
+      html:not(.android-app):not(.is-native) body.is-tutorial #panel-rules.panel-greca {
+        padding: 0 !important;
+        margin: 0;
+        border: 0;
+        background: none;
+        box-shadow: none;
+      }
+      html:not(.android-app):not(.is-native) body.is-tutorial #panel-rules.panel-greca::before,
+      html:not(.android-app):not(.is-native) body.is-tutorial .panel-greca::before {
+        display: none !important;
+        content: none;
+        height: 0;
+        margin: 0;
+      }
+      html:not(.android-app):not(.is-native) body.is-tutorial #guide-coach {
+        display: flex !important;
+        flex-direction: column;
+        visibility: visible;
+        opacity: 1;
+        min-height: 26rem;
+        height: 26rem;
+        max-height: 26rem;
+        margin: 0;
+        padding: 0.85rem 1rem 0.75rem;
+        box-sizing: border-box;
+        overflow: hidden;
+        background: linear-gradient(180deg, #f7f0de 0%, var(--papyrus) 40%, #eadcb8 100%);
+        border: 1px solid var(--gold);
+        box-shadow: 0 10px 28px rgba(12, 20, 36, 0.28), inset 0 0 0 3px #4a1420;
+      }
+      html:not(.android-app):not(.is-native) body.is-tutorial .coach-scroll {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+      html:not(.android-app):not(.is-native) body.is-tutorial .coach-body {
+        min-height: 4.6rem;
+        margin-bottom: 0.55rem;
+      }
+      html:not(.android-app):not(.is-native) body.is-tutorial .coach-task {
+        min-height: 4.4rem;
+        box-sizing: border-box;
+      }
+      html:not(.android-app):not(.is-native) body.is-tutorial .controls.coach-btns {
+        flex: 0 0 auto;
+        margin-top: 0.55rem;
+        margin-bottom: 0;
+      }
       html:not(.android-app):not(.is-native) .side-panel {
-        padding: 0.72rem 0.95rem 0.8rem;
+        padding: 0.55rem 0.75rem 0.6rem;
       }
       html:not(.android-app):not(.is-native) #panel-match {
-        font-size: 1.06rem;
+        font-size: 1rem;
       }
       html:not(.android-app):not(.is-native) .side-panel h2.agora-title,
       html:not(.android-app):not(.is-native) #panel-rules .play-heading {
-        font-size: 1.18rem;
+        font-size: 1.05rem;
+        margin-bottom: 0.35rem;
+        padding-bottom: 0.22rem;
       }
       html:not(.android-app):not(.is-native) #panel-match .counts .num {
-        font-size: 2.35rem;
+        font-size: 2rem;
       }
       html:not(.android-app):not(.is-native) #panel-match .counts .lbl {
-        font-size: 0.82rem;
+        font-size: 0.76rem;
       }
       html:not(.android-app):not(.is-native) #panel-match .cap-line {
-        font-size: 1.05rem;
+        font-size: 0.95rem;
       }
       html:not(.android-app):not(.is-native) .btn {
-        font-size: 1.05rem;
-        min-height: 2.55rem;
+        font-size: 0.98rem;
+        min-height: 2.3rem;
       }
       html:not(.android-app):not(.is-native) .log {
-        height: 6.2rem;
-        font-size: 1.12rem;
+        height: 5.4rem;
+        font-size: 1.02rem;
       }
       html:not(.android-app):not(.is-native) footer.colophon {
         flex-shrink: 0;
@@ -1167,11 +1296,11 @@
       }
       html.android-app body.is-tutorial .side-stack,
       html.is-native body.is-tutorial .side-stack {
-        max-height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
-        height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        max-height: var(--coach-dock, clamp(10.5rem, 28svh, 12rem));
+        height: var(--coach-dock, clamp(10.5rem, 28svh, 12rem));
         overflow: hidden;
         display: flex;
-        flex: 0 0 var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        flex: 0 0 var(--coach-dock, clamp(10.5rem, 28svh, 12rem));
       }
       html.android-app #panel-match,
       html.is-native #panel-match {
@@ -1228,24 +1357,153 @@
       }
       .log .empty { display: none; }
     }
-    @media (max-width: 980px), (hover: none) and (pointer: coarse) {
+    /* Laptop / short desktop: keep board + side panel side-by-side, just scale down */
+    @media (min-width: 901px) and (max-height: 860px) {
+      html:not(.android-app):not(.is-native) header.hero {
+        padding: 0.1rem 0.55rem 0;
+      }
+      html:not(.android-app):not(.is-native) header.hero h1 button {
+        font-size: clamp(1.4rem, 2.9vw, 1.9rem);
+      }
+      html:not(.android-app):not(.is-native) .layout {
+        margin-top: 0.06rem;
+        padding: 0.06rem 0.45rem 0.04rem;
+        gap: 0 0.65rem;
+        grid-template-columns: minmax(0, max-content) minmax(16.5rem, 20rem);
+      }
+      html:not(.android-app):not(.is-native) .board-column {
+        max-height: calc(100dvh - 2.9rem);
+        gap: 0.05rem;
+      }
+      html:not(.android-app):not(.is-native) .board-column .status-pill {
+        font-size: 0.76rem;
+        padding: 0.22rem 0.4rem;
+      }
+      html:not(.android-app):not(.is-native) .board-frame {
+        grid-template-columns: 1.7rem auto;
+        grid-template-rows: minmax(0, auto) 1.35rem;
+        padding: 14px;
+      }
+      html:not(.android-app):not(.is-native) .greca-t,
+      html:not(.android-app):not(.is-native) .greca-b {
+        height: 14px;
+        background-size: 28px 14px;
+      }
+      html:not(.android-app):not(.is-native) .greca-l,
+      html:not(.android-app):not(.is-native) .greca-r {
+        top: 14px;
+        bottom: 14px;
+        width: 14px;
+      }
+      html:not(.android-app):not(.is-native) .greca-l::after,
+      html:not(.android-app):not(.is-native) .greca-r::after {
+        height: 14px;
+        background-size: 28px 14px;
+      }
+      html:not(.android-app):not(.is-native) .rows span {
+        font-size: 0.7rem;
+      }
+      html:not(.android-app):not(.is-native) .cols {
+        min-height: 1.35rem;
+        font-size: 0.8rem;
+      }
+      html:not(.android-app):not(.is-native) #board {
+        width: min(500px, calc(100dvh - 13.4rem), calc(100vw - 24rem));
+      }
+      html:not(.android-app):not(.is-native) body.is-tutorial #board {
+        width: min(470px, calc(100dvh - 12rem), calc(100vw - 24rem));
+      }
+      html:not(.android-app):not(.is-native) .side-stack {
+        margin-top: 0;
+        max-height: calc(100dvh - 3rem);
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+      html:not(.android-app):not(.is-native) .move-dock {
+        min-height: 44px;
+      }
+      html:not(.android-app):not(.is-native) .move-dock .nav-btn {
+        height: 30px;
+      }
+      html:not(.android-app):not(.is-native) #fold-log .log,
+      html:not(.android-app):not(.is-native) .log {
+        height: 4.2rem;
+        max-height: 4.2rem;
+      }
+      html:not(.android-app):not(.is-native) footer.colophon {
+        padding: 0.06rem 0.7rem 0.12rem;
+        font-size: 0.76rem;
+      }
+    }
+    @media (min-width: 901px) and (max-height: 720px) {
+      html:not(.android-app):not(.is-native) #board {
+        width: min(430px, calc(100dvh - 11.6rem), calc(100vw - 22rem));
+      }
+      html:not(.android-app):not(.is-native) .layout {
+        grid-template-columns: minmax(0, max-content) minmax(15.5rem, 18.5rem);
+      }
+      html:not(.android-app):not(.is-native) .board-frame {
+        grid-template-columns: 1.65rem auto;
+        grid-template-rows: minmax(0, auto) 1.3rem;
+        padding: 13px;
+      }
+      html:not(.android-app):not(.is-native) .greca-t,
+      html:not(.android-app):not(.is-native) .greca-b {
+        height: 13px;
+        background-size: 26px 13px;
+      }
+      html:not(.android-app):not(.is-native) .greca-l,
+      html:not(.android-app):not(.is-native) .greca-r {
+        top: 13px;
+        bottom: 13px;
+        width: 13px;
+      }
+      html:not(.android-app):not(.is-native) .greca-l::after,
+      html:not(.android-app):not(.is-native) .greca-r::after {
+        height: 13px;
+        background-size: 26px 13px;
+      }
+      html:not(.android-app):not(.is-native) .cols {
+        min-height: 1.3rem;
+        font-size: 0.78rem;
+      }
+      html:not(.android-app):not(.is-native) .move-dock {
+        min-height: 40px;
+      }
+      html:not(.android-app):not(.is-native) .move-dock .nav-btn {
+        height: 28px;
+      }
+    }
+    @media (max-width: 900px) {
       :root {
-        --nav-gap: max(var(--inset-bottom), 5.25rem);
-        --hero-h: clamp(2.5rem, 8dvh, 3.1rem);
-        /* status + tablero dock + panel marcador debajo del board */
-        --match-chrome-h: clamp(13rem, 38dvh, 18rem);
+        --nav-gap: max(var(--inset-bottom), 0.35rem);
+        --hero-h: 2.55rem;
+        /* status + move-dock + compact match panel — keep page fixed like Petteia */
+        --match-chrome-h: clamp(7.6rem, 22dvh, 10.2rem);
+        --coach-dock: clamp(13.5rem, 36svh, 16.5rem);
+      }
+      /* Online room code needs extra chrome so the board shrinks instead of clipping */
+      body.is-waiting,
+      body.is-online:has(#room-share:not([hidden])) {
+        --match-chrome-h: clamp(12.5rem, 34dvh, 16rem);
       }
       html, body {
         -webkit-tap-highlight-color: transparent;
         overscroll-behavior: none;
-        height: 100dvh;
-        max-height: 100dvh;
-        overflow: hidden;
+        height: 100svh;
+        max-height: 100svh;
+        overflow: hidden !important;
       }
       body:not(.is-tutorial) {
         display: flex;
         flex-direction: column;
         min-height: 0;
+        height: 100svh;
+        max-height: 100svh;
+        overflow: hidden !important;
+        position: fixed;
+        inset: 0;
+        width: 100%;
       }
       body:not(.is-tutorial) header.hero {
         flex: 0 0 auto;
@@ -1283,11 +1541,11 @@
         grid-row: 1;
         justify-self: center;
         align-self: center;
-        transform: translateX(-0.28rem);
-        width: max-content;
-        max-width: min(70vw, 16rem);
+        transform: none;
+        width: auto;
+        max-width: min(52vw, 11.5rem);
         min-width: 0;
-        overflow: visible;
+        overflow: hidden;
         text-align: center;
         z-index: 85;
         pointer-events: none;
@@ -1298,15 +1556,17 @@
         --hero-title-bias: 0px;
       }
       header.hero:not(:has(.hero-end .lat-ad-noads-fab:not([hidden]))) .hero-title {
-        max-width: min(78vw, 17rem);
+        max-width: min(56vw, 12.5rem);
       }
       header.hero h1 button {
-        font-size: clamp(1.18rem, 5.6vw, 1.78rem);
+        font-size: clamp(0.95rem, 4.2vw, 1.28rem);
         letter-spacing: 0.06em;
-        padding: 0.04em 0.1em 0 0.04em;
+        padding: 0.04em 0.06em 0 0.04em;
         font-weight: 600;
-        overflow: visible;
+        overflow: hidden;
+        text-overflow: clip;
         white-space: nowrap;
+        max-width: 100%;
       }
       .hero-tools {
         grid-column: 1;
@@ -1328,23 +1588,27 @@
       .mute-fab, .help-fab { width: 32px; height: 32px; font-size: 0.88rem; }
 
       .layout {
-        grid-template-columns: minmax(0, 1fr);
+        display: flex;
+        flex-direction: column;
+        grid-template-columns: none;
         justify-items: stretch;
-        justify-content: stretch;
-        gap: 0.12rem;
+        justify-content: flex-start;
+        align-items: stretch;
+        gap: 0.08rem;
         margin: 0;
         width: 100%;
         max-width: 100%;
         min-width: 0;
         flex: 1 1 auto;
         min-height: 0;
-        padding: 0.42rem 0.95rem calc(0.75rem + var(--nav-gap));
-        overflow-x: hidden;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior-y: contain;
-        touch-action: pan-y;
+        padding: 0.2rem 0.55rem max(0.35rem, var(--inset-bottom));
+        overflow: hidden;
+        overscroll-behavior: none;
+        touch-action: manipulation;
         box-sizing: border-box;
+      }
+      body:not(.is-tutorial) .layout {
+        overflow: hidden !important;
       }
       body.is-britania .layout {
         max-width: 100%;
@@ -1405,9 +1669,11 @@
       }
 
       body.is-tutorial {
-        overflow: hidden;
-        height: 100dvh;
-        max-height: 100dvh;
+        overflow: hidden !important;
+        overscroll-behavior: none;
+        touch-action: manipulation;
+        height: 100svh;
+        max-height: 100svh;
       }
       body.is-tutorial header.hero {
         grid-template-columns: minmax(3.2rem, 1fr) minmax(0, auto) minmax(3.2rem, 1fr);
@@ -1417,10 +1683,14 @@
         --hero-title-bias: 0px;
       }
       body.is-tutorial header.hero h1 button {
-        font-size: clamp(1.32rem, 6.6vw, 1.95rem);
-        font-size: clamp(1.32rem, 11.4cqi, 1.95rem);
-        letter-spacing: 0.12em;
+        font-size: clamp(0.92rem, 4vw, 1.18rem);
+        letter-spacing: 0.05em;
         font-weight: 600;
+        padding: 0.02em 0.04em 0;
+        max-width: 100%;
+      }
+      body.is-tutorial .hero-title {
+        max-width: min(48vw, 10.8rem);
       }
       body.is-tutorial .hero-tools { padding-left: 0; }
       body.is-tutorial .layout {
@@ -1428,25 +1698,28 @@
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        height: calc(100dvh - 2.2rem - var(--inset-top));
-        padding: 0.04rem 0.95rem 0;
+        height: calc(100svh - 2.35rem - var(--inset-top));
+        padding: 0.08rem 0.42rem 0;
         margin: 0;
         overflow: hidden;
         box-sizing: border-box;
+        gap: 0.2rem;
       }
       body.is-tutorial .board-column {
         order: 1;
         grid-column: auto;
         width: 100%;
         max-width: 100%;
-        flex: 1 1 auto;
+        flex: 0 0 auto;
+        flex-shrink: 0;
         min-height: 0;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        align-items: stretch;
+        align-items: center;
         padding: 0;
         box-sizing: border-box;
+        overflow: hidden;
       }
       body.is-tutorial #panel-rules,
       body.is-tutorial #panel-rules.panel-greca,
@@ -1455,12 +1728,12 @@
         grid-column: auto;
         width: 100%;
         max-width: 100%;
-        height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
-        min-height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
-        max-height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        height: var(--coach-dock, clamp(10.2rem, 28svh, 12.2rem));
+        min-height: var(--coach-dock, clamp(10.2rem, 28svh, 12.2rem));
+        max-height: var(--coach-dock, clamp(10.2rem, 28svh, 12.2rem));
         margin: 0;
         padding: 0;
-        flex: 0 0 var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        flex: 0 0 var(--coach-dock, clamp(10.2rem, 28svh, 12.2rem));
         display: flex;
         flex-direction: column;
         align-self: stretch;
@@ -1472,12 +1745,6 @@
       }
       body.is-tutorial #panel-match,
       body.is-tutorial #fold-log { display: none !important; }
-      body.is-tutorial header.hero h1 button {
-        font-size: clamp(1.32rem, 6.6vw, 1.95rem);
-        font-size: clamp(1.32rem, 11.4cqi, 1.95rem);
-        letter-spacing: 0.12em;
-        padding: 0.04em 0.1em 0 0.1em;
-      }
       body.is-tutorial .panel-greca::before { display: none; }
       body.is-tutorial #guide-coach {
         position: relative;
@@ -1487,12 +1754,12 @@
         z-index: 40;
         width: 100%;
         max-width: 100%;
-        height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
-        flex: 0 0 var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
-        max-height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
-        min-height: var(--coach-dock, clamp(10.8rem, 29dvh, 12.4rem));
+        height: 100%;
+        flex: 1 1 auto;
+        max-height: 100%;
+        min-height: 0;
         margin: 0;
-        padding: 0.28rem 0.7rem 0.36rem;
+        padding: 0.22rem 0.55rem 0.28rem;
         display: flex;
         flex-direction: column;
         align-self: stretch;
@@ -1501,112 +1768,96 @@
         background: linear-gradient(180deg, #f7f0de 0%, #eadcb8 100%);
         border-top: 1px solid var(--gold);
         border-radius: 0.55rem 0.55rem 0 0;
-        box-shadow: 0 -10px 28px rgba(8, 6, 4, 0.35);
+        box-shadow: 0 -8px 22px rgba(8, 6, 4, 0.28);
       }
       body.is-tutorial .coach-scroll {
         flex: 1 1 auto;
         min-height: 0;
         overflow-x: hidden;
-        overflow-y: scroll;
+        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
-        touch-action: pan-y;
-        padding-right: 0.28rem;
-        scrollbar-gutter: stable;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(107, 28, 40, 0.42) rgba(107, 28, 40, 0.08);
+        touch-action: manipulation;
+        padding-right: 0;
+        scrollbar-gutter: auto;
       }
-      body.is-tutorial .coach-scroll::-webkit-scrollbar {
-        width: 5px;
-      }
-      body.is-tutorial .coach-scroll::-webkit-scrollbar-track {
-        background: rgba(107, 28, 40, 0.08);
-        border-radius: 999px;
-      }
+      body.is-tutorial .coach-scroll::-webkit-scrollbar { display: none; width: 0; }
+      body.is-tutorial .coach-scroll::-webkit-scrollbar-track { background: transparent; }
       body.is-tutorial .coach-scroll::-webkit-scrollbar-thumb {
-        background: rgba(107, 28, 40, 0.42);
+        background: rgba(107, 28, 40, 0.35);
         border-radius: 999px;
       }
-      body.is-tutorial #guide-coach.has-scroll-more::after {
-        content: "";
-        position: absolute;
-        left: 0.55rem;
-        right: 0.85rem;
-        bottom: 3.2rem;
-        height: 1.1rem;
-        pointer-events: none;
-        z-index: 6;
-        background: linear-gradient(180deg, rgba(234, 220, 184, 0), rgba(234, 220, 184, 0.92));
-      }
+      body.is-tutorial #guide-coach.has-scroll-more::after { display: none; }
       .coach-more,
       body.is-tutorial .coach-more {
         display: none !important;
       }
       body.is-tutorial .coach-kicker {
         display: block;
-        font-size: clamp(0.88rem, 3.4vw, 1.05rem);
-        margin-bottom: 0.14rem;
-        letter-spacing: 0.1em;
+        font-size: clamp(0.78rem, 2.6vw, 0.9rem);
+        margin-bottom: 0.1rem;
+        letter-spacing: 0.08em;
       }
       body.is-tutorial .coach-title {
-        font-size: clamp(1.28rem, 5.4vw, 1.68rem);
-        line-height: 1.22;
-        margin-bottom: 0.2rem;
+        font-size: clamp(1.12rem, 4.2vw, 1.35rem);
+        line-height: 1.2;
+        margin-bottom: 0.18rem;
         padding-bottom: 0.12rem;
         height: auto;
         overflow-wrap: anywhere;
       }
       body.is-tutorial .coach-body {
-        font-size: clamp(1.14rem, 4.7vw, 1.4rem);
-        line-height: 1.42;
-        margin-bottom: 0.24rem;
+        font-size: clamp(1.02rem, 3.6vw, 1.18rem);
+        line-height: 1.38;
+        margin: 0.14rem 0 0.2rem;
         height: auto;
         overflow-wrap: anywhere;
       }
       body.is-tutorial .coach-task {
-        font-size: clamp(1.14rem, 4.7vw, 1.4rem);
-        padding: 0.46rem 0.58rem;
-        line-height: 1.4;
+        font-size: clamp(0.98rem, 3.4vw, 1.12rem);
+        padding: 0.32rem 0.48rem;
+        line-height: 1.32;
+        margin-top: 0.2rem;
         height: auto;
         overflow-wrap: anywhere;
       }
       body.is-tutorial .coach-dots { display: none; }
+      body.is-tutorial .piece-key { display: none !important; }
       body.is-tutorial .controls.coach-btns {
         position: static;
         flex: 0 0 auto;
         flex-shrink: 0;
         z-index: 8;
-        margin: 0;
-        padding: 0.28rem 0 0;
-        gap: 0.32rem;
+        margin: 0.08rem 0 0;
+        padding: 0.12rem 0 0;
+        gap: 0.28rem;
         border-top: 1px solid rgba(201, 162, 39, 0.28);
         background: none;
       }
       body.is-tutorial .controls.coach-btns .btn {
-        min-height: 48px;
-        font-size: clamp(1rem, 3.6vw, 1.15rem);
-        padding: 0.28rem 0.22rem;
+        min-height: 40px;
+        font-size: 0.9rem;
+        padding: 0.18rem 0.16rem;
       }
-      body.is-tutorial .board-orla { margin: 0; background: transparent; box-shadow: none; }
-      body.is-tutorial .piece-key {
-        gap: 0.18rem;
-        margin: 0.06rem 0 0.14rem;
+      body.is-tutorial .board-orla {
+        margin: 0;
+        background: transparent;
+        box-shadow: none;
+        width: min(
+          100%,
+          calc(100svh - var(--inset-top, 0px) - var(--hero-h, 2.7rem) - var(--coach-dock) - 0.7rem)
+        );
+        max-width: 100%;
+        flex: 0 0 auto;
       }
-      body.is-tutorial .piece-key-card {
-        padding: 0.1rem 0.08rem 0.08rem;
-        gap: 0.04rem;
+      body.is-tutorial .board-frame,
+      body.is-tutorial .board-wrap {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        flex: 0 0 auto;
+        min-height: 0;
       }
-      body.is-tutorial .piece-key-row { min-height: 0; gap: 0.12rem; }
-      body.is-tutorial .piece-key .piece { width: 22px; height: 22px; }
-      body.is-tutorial .piece-key .piece.dux { width: 26px; height: 26px; }
-      body.is-tutorial .piece-key-name {
-        font-size: 0.52rem;
-        letter-spacing: 0.06em;
-        color: var(--imperial);
-        font-weight: 700;
-        text-shadow: none;
-      }
-      body.is-tutorial .piece-key-note { display: none; }
 
       .side-panel,
       #panel-match,
@@ -1640,15 +1891,22 @@
 
       .board-orla {
         padding: 0;
-        width: 100%;
+        width: min(
+          100%,
+          calc(100svh - var(--inset-top) - var(--hero-h) - var(--match-chrome-h))
+        );
         max-width: 100%;
-        margin: 0;
+        max-height: min(
+          100%,
+          calc(100svh - var(--inset-top) - var(--hero-h) - var(--match-chrome-h))
+        );
+        margin: 0 auto;
         box-sizing: border-box;
-        flex: 1 1 auto;
+        flex: 0 1 auto;
         min-height: 0;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
         justify-content: flex-start;
         box-shadow: 0 12px 28px rgba(0,0,0,.42);
       }
@@ -1663,17 +1921,16 @@
         border: 0;
         box-shadow: none;
         box-sizing: border-box;
+        flex: 0 0 auto;
       }
       .cols, .rows { display: none !important; }
       .board-wrap {
-        display: flex;
-        flex: 1 1 auto;
+        display: block;
+        flex: 0 0 auto;
         min-height: 0;
         width: 100%;
         grid-column: auto;
         grid-row: auto;
-        align-items: center;
-        justify-content: center;
       }
       .sq-coord {
         display: block;
@@ -1681,24 +1938,17 @@
         line-height: 1;
         opacity: 0.7;
       }
-      .sq-file { right: 2px; bottom: 1px; top: auto; }
+      .sq-file { right: 2px; bottom: 2px; top: auto; }
       .sq-rank { left: 2px; top: 1px; }
       #board {
-        width: min(
-          100%,
-          calc(100dvh - var(--inset-top) - var(--hero-h) - var(--match-chrome-h) - var(--nav-gap))
-        );
+        width: 100%;
         max-width: 100%;
-        max-height: min(
-          calc(100dvh - var(--inset-top) - var(--hero-h) - var(--match-chrome-h) - var(--nav-gap)),
-          100vw
-        );
         height: auto;
         aspect-ratio: 1 / 1;
         overscroll-behavior: none;
         -webkit-touch-callout: none;
         margin: 0 auto;
-        flex: 1 1 auto;
+        flex: 0 0 auto;
         min-height: 0;
       }
       body.is-britania .board-wrap {
@@ -1722,21 +1972,56 @@
       body.is-britania .sq-coord { font-size: 0.42rem; }
       body.is-tutorial #board {
         width: 100%;
-        max-width: none;
-        height: 100%;
-        aspect-ratio: auto;
-        margin: 0;
-        flex: none;
-      }
-      body.is-tutorial .board-orla,
-      body.is-tutorial .board-frame,
-      body.is-tutorial .board-wrap {
         max-width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1;
         margin: 0 auto;
         flex: 0 0 auto;
+        flex-shrink: 0;
       }
-      .piece { width: 93%; height: 93%; }
-      .piece.dux { width: 98%; height: 98%; }
+      body:not(.is-tutorial) .move-dock {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative;
+        z-index: 1;
+        flex: 0 0 auto;
+        flex-shrink: 0;
+        min-height: 44px;
+        width: min(
+          100%,
+          calc(100svh - var(--inset-top) - var(--hero-h) - var(--match-chrome-h))
+        );
+        max-width: 100%;
+        margin: 6px auto 0;
+        padding: 0 2px 1px;
+        align-self: center;
+        background: #1a140e;
+        border-top: 1px solid rgba(201,162,39,.38);
+        box-sizing: border-box;
+      }
+      body:not(.is-tutorial) .board-column {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
+        align-items: center;
+        gap: 0;
+      }
+      body:not(.is-tutorial) .board-orla {
+        margin-bottom: 0;
+        position: relative;
+        z-index: 2;
+      }
+      body:not(.is-tutorial) #panel-match {
+        position: relative;
+        z-index: 1;
+        margin-top: 0.2rem;
+        clear: both;
+      }
+      .piece { width: 82%; height: 82%; }
+      .piece.dux { width: 88%; height: 88%; }
       .cell.legal::after {
         width: 26%;
         height: 26%;
@@ -1753,85 +2038,159 @@
       }
 
       .status-pill {
-        font-size: clamp(0.68rem, 2.6vw, 0.82rem);
+        font-size: clamp(0.62rem, 2.4vw, 0.74rem);
         font-weight: 600;
-        padding: 0.22rem 0.45rem;
-        letter-spacing: 0.04em;
-        line-height: 1.25;
-        width: 100%;
+        padding: 0.14rem 0.35rem;
+        letter-spacing: 0.03em;
+        line-height: 1.2;
+        width: min(
+          100%,
+          calc(100svh - var(--inset-top) - var(--hero-h) - var(--match-chrome-h))
+        );
         max-width: 100%;
         align-self: center;
         text-align: center;
         box-sizing: border-box;
+        margin-bottom: 0.12rem;
+        flex: 0 0 auto;
       }
       .board-orla {
         align-self: center;
         margin-left: auto;
         margin-right: auto;
       }
-      .nav-btn { height: 36px; }
-      .move-dock { min-height: 0; }
-      #ply-slider { height: 22px; }
-      .counts { margin-bottom: 0.22rem; }
-      .count-card { padding: 0.12rem 0.2rem 0.14rem; }
-      .count-card .lbl { font-size: 0.58rem; letter-spacing: 0.06em; }
-      .count-card .num { font-size: 1.05rem; line-height: 1.05; }
-      .mini-row { min-height: 10px; gap: 2px; margin-top: 1px; }
-      .mini-coin { width: 8px; height: 8px; }
-      .cap-line { font-size: 0.72rem; margin-top: 0.06rem; }
-      .log { height: clamp(2.4rem, 11dvh, 88px); max-height: clamp(2.4rem, 11dvh, 88px); font-size: 1.02rem; }
+      .nav-btn { height: 28px; }
+      .nav-btn svg { width: 20px; height: 13px; }
+      .move-dock {
+        min-height: 44px;
+        flex: 0 0 auto;
+        flex-shrink: 0;
+        display: block;
+        width: 100%;
+      }
+      #ply-slider { height: 14px; }
+      #ply-slider::-webkit-slider-runnable-track { height: 4px; }
+      #ply-slider::-webkit-slider-thumb { width: 12px; height: 12px; margin-top: -4px; }
+      #ply-slider::-moz-range-track { height: 4px; }
+      #ply-slider::-moz-range-thumb { width: 12px; height: 12px; }
+      .counts { margin-bottom: 0.12rem; }
+      .count-card { padding: 0.06rem 0.14rem 0.08rem; }
+      .count-card .lbl { font-size: 0.5rem; letter-spacing: 0.05em; }
+      .count-card .num { font-size: 0.92rem; line-height: 1; }
+      .mini-row { min-height: 8px; gap: 2px; margin-top: 0; }
+      .mini-coin { width: 7px; height: 7px; }
+      .cap-line { font-size: 0.6rem; margin-top: 0.02rem; }
+      .log { height: clamp(3.2rem, 12dvh, 5.4rem); max-height: clamp(3.2rem, 12dvh, 5.4rem); font-size: 0.92rem; }
 
       @media (max-height: 720px) {
-        :root { --match-chrome-h: clamp(11.5rem, 40dvh, 15.5rem); }
-        .log { height: clamp(2rem, 9dvh, 72px); max-height: clamp(2rem, 9dvh, 72px); }
+        :root { --match-chrome-h: clamp(7rem, 20dvh, 9.2rem); }
+        body.is-waiting,
+        body.is-online:has(#room-share:not([hidden])) {
+          --match-chrome-h: clamp(11.5rem, 38dvh, 15rem);
+        }
+        .log { height: clamp(2.8rem, 11dvh, 4.6rem); max-height: clamp(2.8rem, 11dvh, 4.6rem); }
       }
       @media (max-height: 600px) {
-        :root { --match-chrome-h: clamp(10.5rem, 42dvh, 13.5rem); }
-        #fold-log { display: none; }
+        :root { --match-chrome-h: clamp(6.4rem, 18dvh, 8.4rem); }
+        body.is-waiting,
+        body.is-online:has(#room-share:not([hidden])) {
+          --match-chrome-h: clamp(10.5rem, 40dvh, 13.5rem);
+        }
+        #panel-match .count-card .lbl { font-size: 0.44rem; }
+        #panel-match .count-card .num { font-size: 0.8rem; }
       }
 
       #panel-match {
-        margin: 0 0.2rem;
-        width: calc(100% - 0.4rem);
-        padding: 0.4rem 0.5rem 0.65rem;
+        margin: 0.16rem 0 0;
+        width: 100%;
+        max-width: 100%;
+        align-self: stretch;
+        padding: 0.18rem 0.32rem 0.22rem;
         display: flex;
         flex-direction: column;
-        flex-shrink: 0;
-        box-sizing: border-box;
-      }
-      .room-share-code {
-        font-size: clamp(1.55rem, 7.5vw, 2.05rem);
-        letter-spacing: 0.22em;
-        padding: 0.4rem 0.25rem 0.38rem;
-      }
-      #panel-match .room-share { order: 0; }
-      #panel-match .online-dot { order: 5; }
-      #panel-match #btn-copy-room { order: 6; }
-      #panel-match .match-btns {
-        order: 1;
-        margin-top: 0.08rem;
-        margin-bottom: 0.4rem;
-        gap: 0.4rem;
         flex: 0 0 auto;
         flex-shrink: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+        min-height: 0;
+      }
+      #panel-match .counts {
+        order: 3;
+        flex: 0 0 auto;
+        margin-bottom: 0.06rem;
+      }
+      #panel-match .count-card { padding: 0.04rem 0.1rem 0.05rem; }
+      #panel-match .count-card .lbl { font-size: 0.46rem; letter-spacing: 0.04em; }
+      #panel-match .count-card .num { font-size: 0.82rem; line-height: 1; }
+      #panel-match .mini-row { min-height: 7px; gap: 1px; margin-top: 0; }
+      #panel-match .mini-coin { width: 6px; height: 6px; }
+      #panel-match .cap-line { font-size: 0.55rem; margin-top: 0; }
+      #panel-match .match-btns {
+        order: 1;
+        margin-top: 0;
+        margin-bottom: 0.14rem;
+        gap: 0.22rem;
+        flex: 0 0 auto;
       }
       #panel-match .match-btns .btn {
-        min-height: 48px;
-        padding-top: 0.55rem;
-        padding-bottom: 0.55rem;
-        flex-shrink: 0;
-        white-space: nowrap;
-        line-height: 1.2;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
+        min-height: 36px;
+        padding-top: 0.26rem;
+        padding-bottom: 0.26rem;
+        font-size: 0.88rem;
       }
-      #panel-match .rep-meter { order: 2; }
-      #panel-match .counts { order: 3; flex: 0 0 auto; }
-      #panel-match #fold-log { order: 4; }
+      #panel-match .rep-meter { order: 2; margin: 0.06rem 0; font-size: 0.66rem; }
+      #panel-match #fold-log {
+        order: 4;
+        flex: 0 0 auto;
+        min-height: 0;
+        max-height: 5.2rem;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
       #fold-log .fold-label { display: none !important; }
-      #fold-log .log { display: block; margin-top: 0.15rem; }
+      #fold-log .log {
+        display: block !important;
+        margin-top: 0.06rem;
+        height: 4.8rem !important;
+        max-height: 4.8rem !important;
+        min-height: 0;
+        overflow-y: auto !important;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        font-size: 0.88rem;
+        touch-action: pan-y;
+      }
       #fold-log .log .empty { display: none; }
+      .room-share-code {
+        font-size: clamp(1.2rem, 5.5vw, 1.55rem);
+        letter-spacing: 0.18em;
+        padding: 0.22rem 0.2rem 0.2rem;
+      }
+      #panel-match .room-share {
+        order: 0;
+        margin-bottom: 0.18rem;
+        flex: 0 0 auto;
+      }
+      #panel-match .room-share-label {
+        font-size: 0.58rem;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.12rem;
+      }
+      body.is-waiting #fold-log,
+      body.is-online:has(#room-share:not([hidden])) #fold-log {
+        display: none !important;
+      }
+      body.is-waiting #panel-match,
+      body.is-online:has(#room-share:not([hidden])) #panel-match {
+        max-height: min(42svh, 16.5rem);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      #panel-match .online-dot { order: 5; font-size: 0.72rem; }
+      #panel-match #btn-copy-room { order: 6; }
 
       select, button.btn {
         font-size: 1.05rem;
@@ -2041,22 +2400,32 @@
         linear-gradient(180deg, #3a141c 0%, #2a0c12 46%, #0e0c09 100%);
       color: #edd089;
       -webkit-tap-highlight-color: transparent;
-      animation: bootFadeIn 0.55s ease-out both;
+      animation: none;
+      opacity: 1;
     }
     .boot-intro.out {
       pointer-events: none;
-      animation: bootFadeOut 0.55s ease-in forwards;
+      animation: none;
+      opacity: 0;
     }
     .boot-intro[hidden] { display: none !important; }
     /* Desktop web uses overlay-start; native + mobile web keep the boot screen
        (Tutorial / Reglas entry). Hiding boot on all web broke mobile Netlify. */
-    @media (min-width: 981px) and (hover: hover) and (pointer: fine) {
+    @media (min-width: 901px) {
       html:not(.android-app):not(.is-native) #boot-intro {
         display: none !important;
       }
     }
     /* Web mobile boot: keep chrome above frame; buttons always tappable */
-    @media (max-width: 980px), (hover: none) and (pointer: coarse) {
+    @media (max-width: 900px) {
+      /* Never paint the board/chrome under the boot menu (avoids flash/jitter on load). */
+      body:has(#boot-intro:not([hidden])) header.hero,
+      body:has(#boot-intro:not([hidden])) .layout,
+      body:has(#boot-intro:not([hidden])) footer.colophon,
+      body:has(#boot-intro:not([hidden])) .page-frame {
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
       html:not(.android-app):not(.is-native) #boot-intro {
         display: flex !important;
         padding-top: max(3.4rem, calc(var(--inset-top) + 2.6rem));
@@ -2183,7 +2552,7 @@
       position: relative;
       width: min(38vw, 148px); height: min(38vw, 148px);
       margin: 0.15rem auto 1rem;
-      animation: bootSeal 1.05s cubic-bezier(.2,.8,.2,1) both;
+      animation: none;
       filter: drop-shadow(0 12px 20px rgba(0,0,0,.48));
       border-radius: 50%;
       overflow: hidden;
@@ -2195,8 +2564,14 @@
       font-weight: 500;
       letter-spacing: 0.42em;
       padding-left: 0.42em;
+      padding-right: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-wrap: normal;
       text-shadow: 0 -1px 0 rgba(255,244,210,.38), 0 8px 18px rgba(0,0,0,.45);
-      animation: bootTitle 1.15s 0.22s cubic-bezier(.2,.75,.2,1) both;
+      animation: none;
+      opacity: 1;
+      transform: none;
     }
     .boot-sub {
       margin-top: 0.42rem;
@@ -2204,26 +2579,20 @@
       font-size: 0.7rem;
       letter-spacing: 0.28em;
       color: #e8cc6a;
-      animation: bootSub 0.9s 0.55s ease both;
+      animation: none;
+      opacity: 1;
     }
-    .boot-line {
-      margin-top: 0.35rem;
-      font-family: "EB Garamond", Garamond, serif;
-      font-style: italic;
-      font-size: 1.02rem;
-      color: rgba(243, 234, 214, 0.78);
-      animation: bootSub 0.9s 0.75s ease both;
-    }
+    .boot-line { display: none !important; }
     .boot-actions {
       display: flex; flex-direction: column; gap: 0.38rem;
       margin-top: 1.15rem;
-      opacity: 0;
-      transform: translateY(8px);
-      pointer-events: none;
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
     }
     .boot-intro.ready .boot-actions {
       opacity: 1; transform: none; pointer-events: auto;
-      transition: opacity 0.55s ease, transform 0.55s ease;
+      transition: none;
     }
     .boot-actions .btn { min-height: 44px; }
     .boot-colophon {
@@ -2266,6 +2635,33 @@
       .boot-line { display: none; }
       .boot-actions { margin-top: 0.65rem; }
       .boot-colophon { font-size: 0.55rem; }
+    }
+    /* Mobile / narrow: keep LATRVNCVLI inside the greca frame (no right-edge collision) */
+    @media (max-width: 900px) {
+      .boot-frame {
+        padding-left: max(1.35rem, 1.1rem);
+        padding-right: max(1.35rem, 1.1rem);
+      }
+      .boot-title {
+        font-size: clamp(1.05rem, 4.8vw, 1.48rem);
+        letter-spacing: 0.14em;
+        padding-left: 0.14em;
+        padding-right: 0.08em;
+        max-width: 100%;
+        animation: none;
+      }
+      .boot-sub {
+        font-size: clamp(0.58rem, 2.6vw, 0.68rem);
+        letter-spacing: 0.12em;
+        padding-left: 0.12em;
+        padding-right: 0.06em;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      @keyframes bootTitle {
+        from { opacity: 0; letter-spacing: 0.08em; transform: translateY(8px); }
+        to { opacity: 1; letter-spacing: 0.14em; transform: none; }
+      }
     }
     html.android-app,
     html.is-native {
@@ -2491,11 +2887,10 @@
       <div class="boot-greca boot-greca-l" aria-hidden="true"></div>
       <div class="boot-greca boot-greca-r" aria-hidden="true"></div>
       <div class="boot-tile">
-        <img src="brand/boot-tile.png" alt="" width="512" height="512" decoding="async" />
+        <img src="boot-tile.png" alt="" width="512" height="512" decoding="async" />
       </div>
       <p class="boot-title">LATRVNCVLI</p>
       <p class="boot-sub">LVDVS LATRVNCULORVM</p>
-      <p class="boot-line" data-i18n="title_line">El juego de los latrones</p>
       <div class="boot-actions">
         <button class="btn primary" id="boot-play" type="button" data-i18n="title_play">Jugar</button>
         <button class="btn" id="boot-learn" type="button" data-i18n="tutorial">Tutorial</button>
@@ -2519,7 +2914,7 @@
       </div>
     </div>
     <div class="hero-title">
-      <img class="hero-logo" src="/brand/icon-full.png" alt="" width="512" height="512" decoding="async" />
+      <img class="hero-logo" src="brand/icon-full.png" alt="" width="512" height="512" decoding="async" />
       <h1><button type="button" id="title-reload" data-i18n-title="menu" title="Menú principal">LATRVNCVLI</button></h1>
     </div>
     <div class="hero-end">
@@ -2545,7 +2940,8 @@
             <div id="custodia-tip" class="custodia-tip"></div>
           </div>
         </div>
-        <div class="move-dock">
+      </div>
+      <div class="move-dock">
           <input type="range" id="ply-slider" min="0" max="0" value="0" step="1" data-i18n-aria="ply_aria" aria-label="Ir a una jugada" disabled>
           <div class="move-nav" id="move-nav" role="toolbar">
             <button type="button" class="nav-btn" id="nav-start" data-i18n-title="nav_start" title="Inicio" disabled>
@@ -2561,7 +2957,6 @@
               <svg viewBox="0 0 32 20"><path d="M3 3.4v13.2L11.4 10zM12.4 3.4v13.2L20.8 10zM23.6 3H26v14h-2.4z"/></svg>
             </button>
           </div>
-        </div>
       </div>
     </div>
 
@@ -2749,7 +3144,7 @@
         || document.documentElement.classList.contains("is-native");
       /* Desktop web keeps overlay-start as entry; mobile web matches the app boot menu. */
       const isDesktopWeb = !isNative && window.matchMedia
-        && window.matchMedia("(min-width: 981px) and (hover: hover) and (pointer: fine)").matches;
+        && window.matchMedia("(min-width: 901px)").matches;
       if (isDesktopWeb) {
         el.hidden = true;
         el.classList.remove("ready", "out");
@@ -2757,18 +3152,12 @@
         window.latrunculiShowIntro = null;
         return;
       }
-      const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const hide = (instant) => {
         if (el.hidden) return;
-        /* Instant when entering play/tutorial: fade would flash the boot menu under the closing overlay. */
-        if (instant === true || reduce) {
-          el.classList.remove("out", "ready");
-          el.hidden = true;
-          return;
-        }
-        if (el.classList.contains("out")) return;
-        el.classList.add("out");
-        window.setTimeout(() => { if (el.classList.contains("out")) el.hidden = true; }, 560);
+        /* Always snap shut — no fade that flashes the board underneath. */
+        el.classList.remove("out", "ready");
+        el.hidden = true;
+        el.style.removeProperty("display");
       };
       const show = () => {
         el.hidden = false;
@@ -2924,8 +3313,8 @@
         status_lose: "Derrota. {how}",
         log_start: "Negras mueven primero. {dux}.",
         log_tutorial: "Tutorial · los movimientos de cada lección.",
-        dux_normal: "Dux en D VII / E II",
-        dux_britania: "Dux en F VII / G II",
+        dux_normal: "Dux en E II / D VII",
+        dux_britania: "Dux en G II / F VII",
         scroll_more: "Desliza para seguir",
         l0_title: "Las piedras",
         l0_body: "El miles es liso, sin corona. El Dux es más grande, con oro y laurel. Míralos en el tablero.",
@@ -2962,7 +3351,7 @@
         l6_task: "Cierra la pinza. El rival quedará solo con el Dux: victoria.",
         l6_fail: "Mueve a la casilla dorada para capturar el último miles negro.",
         l6_praise: "Victoria. En una partida real, aquí terminaría el juego.",
-        help_html: '<h3 class="help-sec">1. Tablero y piezas</h3><p><strong>Tablero.</strong> Fondo uniforme con líneas incisas (sin escaques bicromos). Hay dos variantes: <strong>Normal</strong> (8×8, 8 milites y un Dux) y <strong>Britania</strong> (8×12, 12 milites y un Dux).</p><div class="piece-key" id="help-piece-key"></div><p><strong>Disposición.</strong> Los milites ocupan la primera fila. El Dux se sitúa en la segunda, a la derecha de la línea central <em>desde el lado de cada jugador</em>. En Normal: <strong>D VII</strong> las negras y <strong>E II</strong> las blancas. En Britania: <strong>F VII</strong> las negras y <strong>G II</strong> las blancas. Las negras mueven primero. Columnas A–H (o A–L); filas I–VIII.</p><h3 class="help-sec">2. Movimiento</h3><p><strong>Ortogonal e ilimitado.</strong> Todas las piezas, incluido el Dux, se mueven como la torre del ajedrez: cualquier distancia en fila o columna, sin saltar.</p><h3 class="help-sec">3. Captura por custodia</h3><p><strong>Pinza.</strong> Una pieza enemiga cae si sitúas una pieza propia adyacente a cada lado, en línea ortogonal. Cada captura se evalúa de forma independiente: no hay cadenas masivas al estilo Reversi.</p><p><strong>Excepción voluntaria.</strong> Si una pieza se introduce por sí misma entre dos enemigas, no es capturada.</p><p><strong>Esquina.</strong> Un miles en una esquina cae si el rival ocupa las dos únicas casillas adyacentes.</p><h3 class="help-sec">4. El Dux</h3><p><strong>Inmune.</strong> El Dux no puede ser capturado por custodia.</p><p><strong>Inmovilización.</strong> Queda inmovilizado si sus cuatro flancos ortogonales están bloqueados (el borde del tablero cuenta como flanco cerrado). Aunque parte del bloqueo lo causen sus propias piezas, el rival gana.</p><h3 class="help-sec">5. Fin de la partida</h3><p><strong>No repetición.</strong> Si la misma posición se repite tres veces con el mismo jugador al turno, ese jugador debe variar su jugada en la cuarta visita.</p><p><strong>Derrota.</strong> Pierde quien se queda solo con el Dux, quien no tiene ningún movimiento legal, o cuyo Dux queda inmovilizado.</p>'
+        help_html: '<h3 class="help-sec">1. Tablero y piezas</h3><p><strong>Tablero.</strong> Fondo uniforme con líneas incisas (sin escaques bicromos). Hay dos variantes: <strong>Normal</strong> (8×8, 8 milites y un Dux) y <strong>Britania</strong> (8×12, 12 milites y un Dux).</p><div class="piece-key" id="help-piece-key"></div><p><strong>Disposición.</strong> Los milites ocupan la primera fila. El Dux se sitúa en la segunda, a la derecha de la línea central <em>desde el lado de cada jugador</em>. En Normal: <strong>E II</strong> las negras y <strong>D VII</strong> las blancas. En Britania: <strong>G II</strong> las negras y <strong>F VII</strong> las blancas. Las negras mueven primero. Columnas A–H (o A–L); filas I–VIII.</p><h3 class="help-sec">2. Movimiento</h3><p><strong>Ortogonal e ilimitado.</strong> Todas las piezas, incluido el Dux, se mueven como la torre del ajedrez: cualquier distancia en fila o columna, sin saltar.</p><h3 class="help-sec">3. Captura por custodia</h3><p><strong>Pinza.</strong> Una pieza enemiga cae si sitúas una pieza propia adyacente a cada lado, en línea ortogonal. Cada captura se evalúa de forma independiente: no hay cadenas masivas al estilo Reversi.</p><p><strong>Excepción voluntaria.</strong> Si una pieza se introduce por sí misma entre dos enemigas, no es capturada.</p><p><strong>Esquina.</strong> Un miles en una esquina cae si el rival ocupa las dos únicas casillas adyacentes.</p><h3 class="help-sec">4. El Dux</h3><p><strong>Inmune.</strong> El Dux no puede ser capturado por custodia.</p><p><strong>Inmovilización.</strong> Queda inmovilizado si sus cuatro flancos ortogonales están bloqueados (el borde del tablero cuenta como flanco cerrado). Aunque parte del bloqueo lo causen sus propias piezas, el rival gana.</p><h3 class="help-sec">5. Fin de la partida</h3><p><strong>No repetición.</strong> Si la misma posición se repite tres veces con el mismo jugador al turno, ese jugador debe variar su jugada en la cuarta visita.</p><p><strong>Derrota.</strong> Pierde quien se queda solo con el Dux, quien no tiene ningún movimiento legal, o cuyo Dux queda inmovilizado.</p>'
       },
       en: {
         sound: "Sound", language: "Language", reload: "Reload", menu: "Main menu", help: "Help", close: "Close",
@@ -3075,8 +3464,8 @@
         status_lose: "Defeat. {how}",
         log_start: "Black moves first. {dux}.",
         log_tutorial: "Tutorial · the moves of each lesson.",
-        dux_normal: "Dux on D VII / E II",
-        dux_britania: "Dux on F VII / G II",
+        dux_normal: "Dux on E II / D VII",
+        dux_britania: "Dux on G II / F VII",
         scroll_more: "Swipe to read on",
         l0_title: "The stones",
         l0_body: "The miles is a plain stone, no crown. The Dux is larger, with gold and laurel. Look at them on the board.",
@@ -3113,7 +3502,7 @@
         l6_task: "Close the pincer. The opponent will have only the Dux: victory.",
         l6_fail: "Move to the gold square to capture the last black miles.",
         l6_praise: "Victory. In a real game, this would end it.",
-        help_html: '<h3 class="help-sec">1. Board and pieces</h3><p><strong>Board.</strong> A uniform ground with incised lines (no two-tone chequer). There are two variants: <strong>Normal</strong> (8×8, 8 milites and a Dux) and <strong>Britania</strong> (8×12, 12 milites and a Dux).</p><div class="piece-key" id="help-piece-key"></div><p><strong>Setup.</strong> The milites occupy the first rank. The Dux sits on the second, to the right of the centre line <em>from each player\'s seat</em>. In Normal: <strong>D VII</strong> for Black and <strong>E II</strong> for White. In Britania: <strong>F VII</strong> for Black and <strong>G II</strong> for White. Black moves first. Files A–H (or A–L); ranks I–VIII.</p><h3 class="help-sec">2. Movement</h3><p><strong>Orthogonal and unlimited.</strong> Every piece, including the Dux, moves like a chess rook: any distance along a rank or file, without jumping.</p><h3 class="help-sec">3. Custodial capture</h3><p><strong>Pincer.</strong> An enemy piece falls if you place one of your own adjacent on each side, in an orthogonal line. Each capture is judged on its own: there are no mass chain-captures as in Reversi.</p><p><strong>Voluntary exception.</strong> If a piece steps between two enemies of its own accord, it is not captured.</p><p><strong>Corner.</strong> A miles in a corner falls if the opponent occupies the only two adjacent squares.</p><h3 class="help-sec">4. The Dux</h3><p><strong>Immune.</strong> The Dux cannot be captured by custody.</p><p><strong>Immobilization.</strong> It is immobilized if its four orthogonal flanks are blocked (the board edge counts as a closed flank). Even if some of the blocking is done by its own pieces, the opponent wins.</p><h3 class="help-sec">5. End of the game</h3><p><strong>No repetition.</strong> If the same position occurs three times with the same player to move, that player must vary the move on the fourth visit.</p><p><strong>Defeat.</strong> You lose if you are left with only the Dux, if you have no legal move, or if your Dux is immobilized.</p>'
+        help_html: '<h3 class="help-sec">1. Board and pieces</h3><p><strong>Board.</strong> A uniform ground with incised lines (no two-tone chequer). There are two variants: <strong>Normal</strong> (8×8, 8 milites and a Dux) and <strong>Britania</strong> (8×12, 12 milites and a Dux).</p><div class="piece-key" id="help-piece-key"></div><p><strong>Setup.</strong> The milites occupy the first rank. The Dux sits on the second, to the right of the centre line <em>from each player\'s seat</em>. In Normal: <strong>E II</strong> for Black and <strong>D VII</strong> for White. In Britania: <strong>G II</strong> for Black and <strong>F VII</strong> for White. Black moves first. Files A–H (or A–L); ranks I–VIII.</p><h3 class="help-sec">2. Movement</h3><p><strong>Orthogonal and unlimited.</strong> Every piece, including the Dux, moves like a chess rook: any distance along a rank or file, without jumping.</p><h3 class="help-sec">3. Custodial capture</h3><p><strong>Pincer.</strong> An enemy piece falls if you place one of your own adjacent on each side, in an orthogonal line. Each capture is judged on its own: there are no mass chain-captures as in Reversi.</p><p><strong>Voluntary exception.</strong> If a piece steps between two enemies of its own accord, it is not captured.</p><p><strong>Corner.</strong> A miles in a corner falls if the opponent occupies the only two adjacent squares.</p><h3 class="help-sec">4. The Dux</h3><p><strong>Immune.</strong> The Dux cannot be captured by custody.</p><p><strong>Immobilization.</strong> It is immobilized if its four orthogonal flanks are blocked (the board edge counts as a closed flank). Even if some of the blocking is done by its own pieces, the opponent wins.</p><h3 class="help-sec">5. End of the game</h3><p><strong>No repetition.</strong> If the same position occurs three times with the same player to move, that player must vary the move on the fourth visit.</p><p><strong>Defeat.</strong> You lose if you are left with only the Dux, if you have no legal move, or if your Dux is immobilized.</p>'
       },
       fr: {
         sound: "Son", language: "Langue", reload: "Actualiser", menu: "Menu principal", help: "Aide", close: "Fermer",
@@ -3226,8 +3615,8 @@
         status_lose: "Défaite. {how}",
         log_start: "Les noirs jouent en premier. {dux}.",
         log_tutorial: "Tutoriel · les coups de chaque leçon.",
-        dux_normal: "Dux en D VII / E II",
-        dux_britania: "Dux en F VII / G II",
+        dux_normal: "Dux en E II / D VII",
+        dux_britania: "Dux en G II / F VII",
         scroll_more: "Fais glisser pour lire",
         l0_title: "Les pierres",
         l0_body: "Le miles est lisse, sans couronne. Le Dux est plus grand, or et laurier. Regarde-les sur le plateau.",
@@ -3264,7 +3653,7 @@
         l6_task: "Ferme la pince. L'adversaire n'aura plus que le Dux : victoire.",
         l6_fail: "Joue sur la case dorée pour prendre le dernier miles noir.",
         l6_praise: "Victoire. Dans une vraie partie, le jeu s'arrêterait ici.",
-        help_html: '<h3 class="help-sec">1. Plateau et pièces</h3><p><strong>Plateau.</strong> Fond uniforme aux lignes incisées (sans damier bicolore). Il y a deux variantes : <strong>Normal</strong> (8×8, 8 milites et un Dux) et <strong>Britania</strong> (8×12, 12 milites et un Dux).</p><div class="piece-key" id="help-piece-key"></div><p><strong>Disposition.</strong> Les milites occupent la première rangée. Le Dux se place sur la seconde, à droite de la ligne centrale <em>depuis le siège de chaque joueur</em>. En Normal : <strong>D VII</strong> pour les noirs et <strong>E II</strong> pour les blancs. En Britania : <strong>F VII</strong> pour les noirs et <strong>G II</strong> pour les blancs. Les noirs jouent en premier. Colonnes A–H (ou A–L) ; rangées I–VIII.</p><h3 class="help-sec">2. Mouvement</h3><p><strong>Orthogonal et illimité.</strong> Toutes les pièces, y compris le Dux, se meuvent comme la tour des échecs : n\'importe quelle distance en rangée ou en colonne, sans sauter.</p><h3 class="help-sec">3. Prise par custodia</h3><p><strong>Pince.</strong> Une pièce ennemie tombe si tu places une pierre à toi de chaque côté, en ligne orthogonale. Chaque prise est jugée à part : pas de chaînes massives à la Reversi.</p><p><strong>Exception volontaire.</strong> Si une pièce s\'introduit d\'elle-même entre deux ennemies, elle n\'est pas prise.</p><p><strong>Coin.</strong> Un miles dans un coin tombe si l\'adversaire occupe les deux seules cases adjacentes.</p><h3 class="help-sec">4. Le Dux</h3><p><strong>Immunisé.</strong> Le Dux ne peut pas être pris par custodia.</p><p><strong>Immobilisation.</strong> Il est immobilisé si ses quatre flancs orthogonaux sont bloqués (le bord du plateau compte comme un flanc fermé). Même si une partie du blocus vient de ses propres pièces, l\'adversaire gagne.</p><h3 class="help-sec">5. Fin de la partie</h3><p><strong>Pas de répétition.</strong> Si la même position se répète trois fois avec le même joueur au trait, ce joueur doit varier son coup à la quatrième visite.</p><p><strong>Défaite.</strong> Perd celui à qui il ne reste que le Dux, celui qui n\'a aucun coup légal, ou dont le Dux est immobilisé.</p>'
+        help_html: '<h3 class="help-sec">1. Plateau et pièces</h3><p><strong>Plateau.</strong> Fond uniforme aux lignes incisées (sans damier bicolore). Il y a deux variantes : <strong>Normal</strong> (8×8, 8 milites et un Dux) et <strong>Britania</strong> (8×12, 12 milites et un Dux).</p><div class="piece-key" id="help-piece-key"></div><p><strong>Disposition.</strong> Les milites occupent la première rangée. Le Dux se place sur la seconde, à droite de la ligne centrale <em>depuis le siège de chaque joueur</em>. En Normal : <strong>E II</strong> pour les noirs et <strong>D VII</strong> pour les blancs. En Britania : <strong>G II</strong> pour les noirs et <strong>F VII</strong> pour les blancs. Les noirs jouent en premier. Colonnes A–H (ou A–L) ; rangées I–VIII.</p><h3 class="help-sec">2. Mouvement</h3><p><strong>Orthogonal et illimité.</strong> Toutes les pièces, y compris le Dux, se meuvent comme la tour des échecs : n\'importe quelle distance en rangée ou en colonne, sans sauter.</p><h3 class="help-sec">3. Prise par custodia</h3><p><strong>Pince.</strong> Une pièce ennemie tombe si tu places une pierre à toi de chaque côté, en ligne orthogonale. Chaque prise est jugée à part : pas de chaînes massives à la Reversi.</p><p><strong>Exception volontaire.</strong> Si une pièce s\'introduit d\'elle-même entre deux ennemies, elle n\'est pas prise.</p><p><strong>Coin.</strong> Un miles dans un coin tombe si l\'adversaire occupe les deux seules cases adjacentes.</p><h3 class="help-sec">4. Le Dux</h3><p><strong>Immunisé.</strong> Le Dux ne peut pas être pris par custodia.</p><p><strong>Immobilisation.</strong> Il est immobilisé si ses quatre flancs orthogonaux sont bloqués (le bord du plateau compte comme un flanc fermé). Même si une partie du blocus vient de ses propres pièces, l\'adversaire gagne.</p><h3 class="help-sec">5. Fin de la partie</h3><p><strong>Pas de répétition.</strong> Si la même position se répète trois fois avec le même joueur au trait, ce joueur doit varier son coup à la quatrième visite.</p><p><strong>Défaite.</strong> Perd celui à qui il ne reste que le Dux, celui qui n\'a aucun coup légal, ou dont le Dux est immobilisé.</p>'
       },
       ru: {
         sound: "Звук", language: "Язык", reload: "Обновить", menu: "Главное меню", help: "Справка", close: "Закрыть",
@@ -3377,8 +3766,8 @@
         status_lose: "Поражение. {how}",
         log_start: "Чёрные ходят первыми. {dux}.",
         log_tutorial: "Обучение · ходы каждого урока.",
-        dux_normal: "Дукс на D VII / E II",
-        dux_britania: "Дукс на F VII / G II",
+        dux_normal: "Дукс на E II / D VII",
+        dux_britania: "Дукс на G II / F VII",
         scroll_more: "Прокрути дальше",
         l0_title: "Камни",
         l0_body: "Miles — гладкий камень, без короны. Dux крупнее, с золотом и лавром. Посмотри их на доске.",
@@ -3415,7 +3804,7 @@
         l6_task: "Сомкни клещи. У соперника останется только Dux: победа.",
         l6_fail: "Пойди на золотую клетку, чтобы взять последнего чёрного miles.",
         l6_praise: "Победа. В настоящей партии игра бы здесь кончилась.",
-        help_html: '<h3 class="help-sec">1. Доска и фигуры</h3><p><strong>Доска.</strong> Однородный фон с прочерченными линиями (без двухцветной клетки). Два варианта: <strong>Обычный</strong> (8×8, 8 milites и Dux) и <strong>Britania</strong> (8×12, 12 milites и Dux).</p><div class="piece-key" id="help-piece-key"></div><p><strong>Расстановка.</strong> Milites занимают первый ряд. Dux стоит на втором, справа от центральной линии <em>со стороны каждого игрока</em>. В обычном: <strong>D VII</strong> у чёрных и <strong>E II</strong> у белых. В Britania: <strong>F VII</strong> у чёрных и <strong>G II</strong> у белых. Чёрные ходят первыми. Вертикали A–H (или A–L); ряды I–VIII.</p><h3 class="help-sec">2. Ход</h3><p><strong>Ортогонально и без ограничения.</strong> Все фигуры, включая Dux, ходят как шахматная ладья: на любое расстояние по ряду или вертикали, без прыжков.</p><h3 class="help-sec">3. Взятие стражей</h3><p><strong>Клещи.</strong> Вражеская фигура падает, если поставить свою вплотную с каждой стороны по ортогонали. Каждое взятие считается отдельно: нет массовых цепочек как в реверси.</p><p><strong>Добровольное исключение.</strong> Если фигура сама входит между двумя вражескими, её не берут.</p><p><strong>Угол.</strong> Miles в углу падает, если соперник занимает две единственные соседние клетки.</p><h3 class="help-sec">4. Dux</h3><p><strong>Неуязвим.</strong> Dux нельзя взять стражей.</p><p><strong>Обездвиживание.</strong> Он обездвижен, если закрыты все четыре ортогональных фланга (край доски считается закрытым флангом). Даже если часть блока создают свои фигуры, побеждает соперник.</p><h3 class="help-sec">5. Конец партии</h3><p><strong>Без повторения.</strong> Если одна и та же позиция повторяется три раза при ходе того же игрока, на четвёртый визит этот игрок обязан изменить ход.</p><p><strong>Поражение.</strong> Проигрывает тот, у кого остался только Dux, у кого нет легального хода, или чей Dux обездвижен.</p>'
+        help_html: '<h3 class="help-sec">1. Доска и фигуры</h3><p><strong>Доска.</strong> Однородный фон с прочерченными линиями (без двухцветной клетки). Два варианта: <strong>Обычный</strong> (8×8, 8 milites и Dux) и <strong>Britania</strong> (8×12, 12 milites и Dux).</p><div class="piece-key" id="help-piece-key"></div><p><strong>Расстановка.</strong> Milites занимают первый ряд. Dux стоит на втором, справа от центральной линии <em>со стороны каждого игрока</em>. В обычном: <strong>E II</strong> у чёрных и <strong>D VII</strong> у белых. В Britania: <strong>G II</strong> у чёрных и <strong>F VII</strong> у белых. Чёрные ходят первыми. Вертикали A–H (или A–L); ряды I–VIII.</p><h3 class="help-sec">2. Ход</h3><p><strong>Ортогонально и без ограничения.</strong> Все фигуры, включая Dux, ходят как шахматная ладья: на любое расстояние по ряду или вертикали, без прыжков.</p><h3 class="help-sec">3. Взятие стражей</h3><p><strong>Клещи.</strong> Вражеская фигура падает, если поставить свою вплотную с каждой стороны по ортогонали. Каждое взятие считается отдельно: нет массовых цепочек как в реверси.</p><p><strong>Добровольное исключение.</strong> Если фигура сама входит между двумя вражескими, её не берут.</p><p><strong>Угол.</strong> Miles в углу падает, если соперник занимает две единственные соседние клетки.</p><h3 class="help-sec">4. Dux</h3><p><strong>Неуязвим.</strong> Dux нельзя взять стражей.</p><p><strong>Обездвиживание.</strong> Он обездвижен, если закрыты все четыре ортогональных фланга (край доски считается закрытым флангом). Даже если часть блока создают свои фигуры, побеждает соперник.</p><h3 class="help-sec">5. Конец партии</h3><p><strong>Без повторения.</strong> Если одна и та же позиция повторяется три раза при ходе того же игрока, на четвёртый визит этот игрок обязан изменить ход.</p><p><strong>Поражение.</strong> Проигрывает тот, у кого остался только Dux, у кого нет легального хода, или чей Dux обездвижен.</p>'
       }
     };
 
@@ -3478,11 +3867,25 @@
     }
     function applyStaticI18n() {
       document.documentElement.lang = state.lang;
+      syncHelpCloseLabel();
       document.querySelectorAll("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
       document.querySelectorAll("[data-i18n-title]").forEach((el) => { el.title = t(el.dataset.i18nTitle); });
       document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => { el.placeholder = t(el.dataset.i18nPlaceholder); });
       document.querySelectorAll("[data-i18n-aria]").forEach((el) => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
       fillHelp();
+    }
+    function isMobileWebUi() {
+      return !!(window.matchMedia
+        && window.matchMedia("(max-width: 900px)").matches);
+    }
+    function syncHelpCloseLabel() {
+      const btn = document.getElementById("help-close");
+      if (!btn) return;
+      btn.setAttribute("data-i18n", isMobileWebUi() ? "back_menu" : "back_board");
+    }
+    function closeHelpOverlay() {
+      if (isMobileWebUi()) goMainMenu();
+      else toggleOverlay(els.overlayHelp, false);
     }
     function colorOf(p) {
       if (p === WHITE || p === WKING) return WHITE;
@@ -3500,7 +3903,7 @@
         setup() {
           const b = emptyBoard();
           b[6][2] = WHITE;
-          b[6][4] = WKING;
+          b[6][3] = WKING;
           b[1][2] = BLACK;
           b[1][4] = BKING;
           return b;
@@ -3699,8 +4102,9 @@
     function ranks() { return RANKS; }
     function files() { return state.variant === "britania" ? 12 : 8; }
     function kingFile(color) {
-      if (state.variant === "britania") return color === WHITE ? 6 : 5;
-      return color === WHITE ? 4 : 3;
+      /* Right of centre from each seat: Black→E/G, White→D/F (matches app start). */
+      if (state.variant === "britania") return color === WHITE ? 5 : 6;
+      return color === WHITE ? 3 : 4;
     }
     function boardCorners() {
       const R = ranks() - 1, C = files() - 1;
@@ -3723,9 +4127,12 @@
     }
     function cloneBoard(b) { return b.map((row) => row.slice()); }
     function inb(r, c) { return r >= 0 && r < ranks() && c >= 0 && c < files(); }
-    function fileLetter(c) { return FILE_LETTERS[files() - 1 - c]; }
-    function alg(r, c) { return fileLetter(c) + RANK_ROMAN[r + 1]; }
-    function rankLabel(r) { return RANK_ROMAN[r + 1]; }
+    function fileLetter(c) { return FILE_LETTERS[c]; }
+    /* Rank I is Black's home (array row 0); rank VIII is White's home (row 7).
+       Same in tutorial and in play (when flipped, I stays on Black's near side). */
+    function rankNum(r) { return r + 1; }
+    function alg(r, c) { return fileLetter(c) + RANK_ROMAN[rankNum(r)]; }
+    function rankLabel(r) { return RANK_ROMAN[rankNum(r)]; }
     function humanSide() { return state.mode === "tutorial" ? WHITE : state.human; }
     function aiSide() { return 3 - state.human; }
     function boardFlipped() { return humanSide() === BLACK; }
@@ -4219,9 +4626,10 @@
         return searchTo(board, ai, 2, evaluateMaterial, 520, greedy);
       }
       if (difficulty === "centurio") {
-        return searchTo(board, ai, 3, evaluate, 860, greedy);
+        return searchTo(board, ai, 3, evaluate, 720, greedy);
       }
-      return searchTo(board, ai, 4, evaluate, 1700, greedy);
+      /* Caesar: still deep enough to feel strong, but snappier for pace. */
+      return searchTo(board, ai, 4, evaluate, 980, greedy);
     }
 
     function kickHtmlAudio() {
@@ -4992,14 +5400,14 @@
     function stampSquareCoords(cell, r, c) {
       const flip = boardFlipped();
       const botR = flip ? 0 : ranks() - 1;
-      const leftC = flip ? files() - 1 : 0;
+      /* Always label file A on the visual left (never mirror H↔A). */
       if (r === botR) {
         const s = document.createElement("span");
         s.className = "sq-coord sq-file";
         s.textContent = fileLetter(c);
         cell.appendChild(s);
       }
-      if (c === leftC) {
+      if (c === 0) {
         const s = document.createElement("span");
         s.className = "sq-coord sq-rank";
         s.textContent = rankLabel(r);
@@ -5013,8 +5421,9 @@
       for (let r = 0; r < R; r++) {
         for (let c = 0; c < C; c++) {
           const cell = state.cells[r][c];
+          /* Rank-only flip: A stays left, H stays right (black still sits at the near side). */
           cell.style.gridRow = String(flip ? R - r : r + 1);
-          cell.style.gridColumn = String(flip ? C - c : c + 1);
+          cell.style.gridColumn = String(c + 1);
         }
       }
       els.ranks.innerHTML = "";
@@ -5026,9 +5435,8 @@
         els.ranks.appendChild(span);
       }
       for (let vc = 0; vc < C; vc++) {
-        const c = flip ? C - 1 - vc : vc;
         const span = document.createElement("span");
-        span.textContent = fileLetter(c);
+        span.textContent = fileLetter(vc);
         els.files.appendChild(span);
       }
     }
@@ -5056,7 +5464,7 @@
     function applyBoardCursor(r, c) {
       if (!els.board) return;
       if (drag.holding) {
-        els.board.style.cursor = "grabbing";
+        els.board.style.cursor = "pointer";
         return;
       }
       if (r == null || c == null || !inb(r, c)) {
@@ -5064,7 +5472,7 @@
         return;
       }
       if (canControl() && isOwnHoverPiece(colorOf(state.board[r][c]))) {
-        els.board.style.cursor = "grab";
+        els.board.style.cursor = "pointer";
         return;
       }
       if (canControl() && state.legal.some((m) => m.nr === r && m.nc === c)) {
@@ -5268,7 +5676,7 @@
       const c = Math.floor(((x - rect.left) / rect.width) * files());
       let r = Math.floor(((y - rect.top) / rect.height) * ranks());
       if (!inb(r, c)) return null;
-      if (boardFlipped()) return [ranks() - 1 - r, files() - 1 - c];
+      if (boardFlipped()) return [ranks() - 1 - r, c];
       return [r, c];
     }
 
@@ -5386,7 +5794,7 @@
         ev.preventDefault();
         placeHeldPiece(ev.clientX, ev.clientY);
         updateDropHover(ev);
-        els.board.style.cursor = "grabbing";
+        els.board.style.cursor = "pointer";
       }
     }
 
@@ -5601,12 +6009,12 @@
 
       if (state.mode === "game" && state.vs === "ai" && state.turn === aiSide()) {
         paintTurnStatus(true);
-        const think = state.difficulty === "puer" ? 280
-          : state.difficulty === "tiro" ? 380
-          : state.difficulty === "miles" ? 480
-          : state.difficulty === "centurio" ? 620
-          : 780;
-        await pause(think + Math.random() * 320);
+        const think = state.difficulty === "puer" ? 240
+          : state.difficulty === "tiro" ? 320
+          : state.difficulty === "miles" ? 400
+          : state.difficulty === "centurio" ? 480
+          : 520;
+        await pause(think + Math.random() * 180);
         if (playAborted(startedMode, token) || state.mode !== "game") { abortPlay(); return; }
         const aiMove = computeAI(state.board, state.difficulty, aiSide());
         if (!aiMove) { finishGame({ winner: humanSide(), reason: "immobile" }); return; }
@@ -5892,7 +6300,7 @@
       state.board = initialBoard();
       state.turn = BLACK;
       document.body.classList.add("is-idle");
-      document.body.classList.remove("is-online", "is-waiting");
+      document.body.classList.remove("is-online", "is-waiting", "is-tutorial");
       resetHistory();
       layoutBoard();
       resetPageScroll();
@@ -5905,6 +6313,12 @@
       toggleOverlay(els.overlayStart, false);
       toggleOverlay(els.overlayWin, false);
       toggleOverlay(els.overlayHelp, false);
+      /* Back to main menu — never leave a preconfigured idle board. */
+      if (typeof window.latrunculiShowIntro === "function") {
+        window.latrunculiShowIntro();
+      } else {
+        toggleOverlay(els.overlayStart, true);
+      }
     }
 
     function setPlayTab(tab) {
@@ -6042,8 +6456,8 @@
     });
     document.getElementById("btn-learn").addEventListener("click", startTutorial);
     document.getElementById("btn-help").addEventListener("click", () => toggleOverlay(els.overlayHelp, true));
-    document.getElementById("help-close").addEventListener("click", () => toggleOverlay(els.overlayHelp, false));
-    document.getElementById("help-x").addEventListener("click", () => toggleOverlay(els.overlayHelp, false));
+    document.getElementById("help-close").addEventListener("click", closeHelpOverlay);
+    document.getElementById("help-x").addEventListener("click", closeHelpOverlay);
     document.getElementById("start-close").addEventListener("click", () => toggleOverlay(els.overlayStart, false));
     const bootPlay = document.getElementById("boot-play");
     const bootLearn = document.getElementById("boot-learn");
@@ -6079,18 +6493,20 @@
     function goMainMenu() {
       closeLangMenu();
       resetPageScroll();
-      toggleOverlay(els.overlayStart, false);
       toggleOverlay(els.overlayHelp, false);
       toggleOverlay(els.overlayWin, false);
-      if (typeof window.latrunculiShowIntro === "function") window.latrunculiShowIntro();
-      else {
+      if (typeof window.latrunculiShowIntro === "function") {
+        /* Mobile / native: boot menu */
+        toggleOverlay(els.overlayStart, false);
+        window.latrunculiShowIntro();
+      } else {
+        /* Desktop web: no boot screen — reopen match setup, keep board visible */
         const boot = document.getElementById("boot-intro");
         if (boot) {
-          boot.hidden = false;
-          boot.style.removeProperty("display");
-          boot.classList.remove("out");
-          boot.classList.add("ready");
+          boot.hidden = true;
+          boot.classList.remove("out", "ready");
         }
+        toggleOverlay(els.overlayStart, true);
       }
     }
     document.getElementById("title-reload").addEventListener("click", goMainMenu);
@@ -6246,6 +6662,14 @@
     layoutBoard();
     render();
     applyLang();
+    const mobileUiMq = window.matchMedia("(max-width: 900px)");
+    const onMobileUiChange = () => {
+      syncHelpCloseLabel();
+      const btn = document.getElementById("help-close");
+      if (btn) btn.textContent = t(btn.dataset.i18n);
+    };
+    if (mobileUiMq.addEventListener) mobileUiMq.addEventListener("change", onMobileUiChange);
+    else if (mobileUiMq.addListener) mobileUiMq.addListener(onMobileUiChange);
   })();
   </script>
 </body>

@@ -4,9 +4,9 @@ Ludus Latrunculorum. Web y Android en el mismo repo, en carpetas distintas.
 
 ## Web
 
-https://katiuxa.github.io/Latrunculi/
+https://latrunculigame.vercel.app
 
-Código en `docs/`. Esa carpeta es también el publish de Netlify.
+Código en `docs/`. Esa carpeta es la que se publica en Vercel.
 
 ```bash
 node server.js
