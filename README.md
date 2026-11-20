@@ -1,12 +1,12 @@
 # Latrunculi
 
-Ludus Latrunculorum. Web y Android en el mismo repo, en carpetas distintas.
+Ludus Latrunculorum. Web and Android live in the same repo, in separate folders.
 
 ## Web
 
 https://latrunculigame.vercel.app
 
-Código en `docs/`. Esa carpeta es la que se publica en Vercel.
+Code is in `docs/`. That folder is what Vercel publishes.
 
 ```bash
 node server.js
@@ -14,13 +14,13 @@ node server.js
 
 ## Android
 
-Capacitor. Versión **1.0.89**. Código nativo en `android/`. El HTML de la app se genera con `npm run prepare:android` (no uses `docs/` para el APK).
+Capacitor. Version **1.0.89**. Native code is in `android/`. The app HTML is generated with `npm run prepare:android` (do not use `docs/` for the APK).
 
 ```bash
 npm ci
 npm run apk
 ```
 
-Keystore de Play Store fuera de git.
+The Play Store keystore stays outside git.
 
-La barra de navegación de Android se reserva con insets nativos en `MainActivity`.
+The Android navigation bar is kept clear with native insets in `MainActivity`.
