@@ -1,10 +1,14 @@
 # Latrunculi
 
-Ludus Latrunculorum. Web and Android live in the same repo, in separate folders.
+Ludus Latrunculorum. Roman soldiers on an incised board, on the web and on Android.
+
+Every piece, including the Dux, moves like a rook: any distance along a rank or file, without jumping. An enemy piece falls by custody when two of yours flank it. The Dux cannot be taken that way. You beat it by closing its four sides, even if one side is blocked by its own piece.
+
+Two boards. **Normal** is 8×8, with 8 milites and a Dux. **Britannia** is 8×12, with 12 milites and a Dux. Black moves first.
 
 ## Web
 
-https://latrunculigame.vercel.app
+https://latrunculi.vercel.app
 
 Code is in `docs/`. That folder is what Vercel publishes.
 
